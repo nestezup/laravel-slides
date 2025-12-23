@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Code Serendipity - 업무 자동화 마스터 클래스</title>
     <link rel="stylesheet" href="common.css">
     <style>
-        /* Part 1 테마 색상 */
+        /* Part 1 테마 색상 - Cyan (Fresh Start) */
         :root {
-            --accent-color: #ffc107;
-            --accent-text-color: #2c3e50;
-            --section-title-color: #3498db;
-            --section-title-hover-bg: rgba(52, 152, 219, 0.2);
+            --accent-color: #22d3ee;
+            --accent-text-color: #000000;
+            --section-title-color: #06b6d4;
+            --section-title-hover-bg: rgba(34, 211, 238, 0.15);
         }
 
         /* Part 1 전용 스타일 */
@@ -26,7 +27,7 @@
             font-size: 1.2em;
             font-weight: 600;
             color: #2c3e50;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .architecture-diagram {
@@ -75,7 +76,7 @@
             border-radius: 0 0 8px 8px;
         }
 
-        .stack-box + .stack-box {
+        .stack-box+.stack-box {
             border-top: none;
         }
 
@@ -93,12 +94,12 @@
             display: flex;
         }
 
-        .stack-box.split > div {
+        .stack-box.split>div {
             flex: 1;
             padding: 0.5em;
         }
 
-        .stack-box.split > div:first-child {
+        .stack-box.split>div:first-child {
             border-right: 2px solid #3498db;
         }
 
@@ -214,7 +215,7 @@
             border-radius: 0 8px 8px 0;
         }
 
-        .crud-box + .crud-box {
+        .crud-box+.crud-box {
             border-left: none;
         }
 
@@ -387,6 +388,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- 네비게이션 -->
     <nav>
@@ -913,7 +915,9 @@ sail artisan make:filament-resource Customer --generate</code></pre>
                     </div>
                     <div class="arch-arrow">↓</div>
                     <div class="arch-layer container">
-                        <div style="background: #2980b9; color: white; padding: 0.5em; border-radius: 6px 6px 0 0; font-weight: 600;">Docker Container</div>
+                        <div
+                            style="background: #2980b9; color: white; padding: 0.5em; border-radius: 6px 6px 0 0; font-weight: 600;">
+                            Docker Container</div>
                         <div class="container-inner">
                             <div class="inner-layer">
                                 <div class="layer-title">Filament</div>
@@ -1081,7 +1085,7 @@ http://localhost/admin</code></pre>
         }
 
         // 아코디언 네비게이션
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const sections = document.querySelectorAll('section[id]');
             const navSections = document.querySelectorAll('.nav-section');
             const navLinks = document.querySelectorAll('nav a');
@@ -1089,7 +1093,7 @@ http://localhost/admin</code></pre>
             // 섹션 타이틀 클릭 시 아코디언 토글
             navSections.forEach(navSection => {
                 const title = navSection.querySelector('.section-title');
-                title.addEventListener('click', function(e) {
+                title.addEventListener('click', function (e) {
                     navSections.forEach(ns => {
                         if (ns !== navSection) ns.classList.remove('open');
                     });
@@ -1130,4 +1134,5 @@ http://localhost/admin</code></pre>
         });
     </script>
 </body>
+
 </html>

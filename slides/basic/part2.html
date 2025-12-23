@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PART 2: 고객 테이블</title>
     <link rel="stylesheet" href="common.css">
     <style>
-        /* Part 2 테마 색상 */
+        /* Part 2 테마 색상 - Indigo (Structure) */
         :root {
-            --accent-color: #e74c3c;
+            --accent-color: #818cf8;
             --accent-text-color: white;
-            --section-title-color: #f39c12;
-            --section-title-hover-bg: rgba(243, 156, 18, 0.2);
+            --section-title-color: #6366f1;
+            --section-title-hover-bg: rgba(129, 140, 248, 0.15);
         }
 
         .table-design {
@@ -199,6 +200,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- 네비게이션 -->
     <nav>
@@ -342,13 +344,17 @@
         <section id="column-record">
             <h2>컬럼 vs 레코드</h2>
 
-            <div class="diagram-container" style="background: #f8f9fa; padding: 2em; border-radius: 8px; margin: 1em 0;">
+            <div class="diagram-container"
+                style="background: #f8f9fa; padding: 2em; border-radius: 8px; margin: 1em 0;">
                 <table style="max-width: 600px; margin: 0 auto; border-collapse: collapse;">
                     <thead>
                         <tr>
-                            <th style="background: #3498db; color: white; border: 2px solid #3498db; padding: 12px;">이름<br><small style="font-weight: 400;">컬럼1</small></th>
-                            <th style="background: #3498db; color: white; border: 2px solid #3498db; padding: 12px;">전화번호<br><small style="font-weight: 400;">컬럼2</small></th>
-                            <th style="background: #3498db; color: white; border: 2px solid #3498db; padding: 12px;">생년월일<br><small style="font-weight: 400;">컬럼3</small></th>
+                            <th style="background: #3498db; color: white; border: 2px solid #3498db; padding: 12px;">
+                                이름<br><small style="font-weight: 400;">컬럼1</small></th>
+                            <th style="background: #3498db; color: white; border: 2px solid #3498db; padding: 12px;">
+                                전화번호<br><small style="font-weight: 400;">컬럼2</small></th>
+                            <th style="background: #3498db; color: white; border: 2px solid #3498db; padding: 12px;">
+                                생년월일<br><small style="font-weight: 400;">컬럼3</small></th>
                             <th style="background: transparent; border: none;"></th>
                         </tr>
                     </thead>
@@ -384,7 +390,8 @@
                 <p>각 레코드의 고유 식별자. 중복 불가. 자동 증가.</p>
             </div>
 
-            <div class="diagram-container" style="background: #f8f9fa; padding: 2em; border-radius: 8px; margin: 1em 0;">
+            <div class="diagram-container"
+                style="background: #f8f9fa; padding: 2em; border-radius: 8px; margin: 1em 0;">
                 <table class="table-design" style="max-width: 500px; margin: 0 auto;">
                     <thead>
                         <tr>
@@ -433,7 +440,8 @@
                 <p>PHP 코드로 테이블 구조를 정의</p>
             </div>
 
-            <div class="diagram-container" style="background: #f8f9fa; padding: 2em; border-radius: 8px; margin: 1em 0;">
+            <div class="diagram-container"
+                style="background: #f8f9fa; padding: 2em; border-radius: 8px; margin: 1em 0;">
                 <div class="flow-diagram">
                     <div class="flow-box">
                         <div class="label">Migration</div>
@@ -559,7 +567,8 @@
                 <p>Eloquent ORM: SQL 없이 PHP 객체로 데이터를 다룸</p>
             </div>
 
-            <div class="diagram-container" style="background: #f8f9fa; padding: 2em; border-radius: 8px; margin: 1em 0;">
+            <div class="diagram-container"
+                style="background: #f8f9fa; padding: 2em; border-radius: 8px; margin: 1em 0;">
                 <div class="flow-diagram">
                     <div class="flow-box">
                         <div class="label">PHP 코드</div>
@@ -795,14 +804,14 @@ class Customer extends Model
             });
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const sections = document.querySelectorAll('section[id]');
             const navSections = document.querySelectorAll('.nav-section');
             const navLinks = document.querySelectorAll('nav a');
 
             navSections.forEach(navSection => {
                 const title = navSection.querySelector('.section-title');
-                title.addEventListener('click', function(e) {
+                title.addEventListener('click', function (e) {
                     navSections.forEach(ns => {
                         if (ns !== navSection) ns.classList.remove('open');
                     });
@@ -840,4 +849,5 @@ class Customer extends Model
         });
     </script>
 </body>
+
 </html>

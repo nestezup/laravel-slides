@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PART 3: 시술내역 테이블</title>
     <link rel="stylesheet" href="common.css">
     <style>
-        /* Part 3 테마 색상 */
+        /* Part 3 테마 색상 - Teal (Connection) */
         :root {
-            --accent-color: #27ae60;
-            --accent-text-color: white;
-            --section-title-color: #2ecc71;
-            --section-title-hover-bg: rgba(46, 204, 113, 0.2);
+            --accent-color: #2dd4bf;
+            --accent-text-color: #000000;
+            --section-title-color: #14b8a6;
+            --section-title-hover-bg: rgba(45, 212, 191, 0.15);
         }
 
         .table-design {
@@ -257,6 +258,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- 네비게이션 -->
     <nav>
@@ -375,7 +377,8 @@
             <div class="two-column">
                 <div class="compare-box before">
                     <h4>엑셀 방식</h4>
-                    <pre style="font-size: 0.85em; background: #fff; padding: 1em; border-radius: 4px; overflow-x: auto;">=VLOOKUP(A2, 고객명단!A:D, 2, FALSE)</pre>
+                    <pre
+                        style="font-size: 0.85em; background: #fff; padding: 1em; border-radius: 4px; overflow-x: auto;">=VLOOKUP(A2, 고객명단!A:D, 2, FALSE)</pre>
                     <ul style="margin-top: 1em; font-size: 0.9em;">
                         <li>수식이 복잡함</li>
                         <li>이름이 바뀌면 깨짐</li>
@@ -385,7 +388,8 @@
                 </div>
                 <div class="compare-box after">
                     <h4>데이터베이스 방식</h4>
-                    <pre style="font-size: 0.85em; background: #fff; padding: 1em; border-radius: 4px;">$treatment->customer->name</pre>
+                    <pre
+                        style="font-size: 0.85em; background: #fff; padding: 1em; border-radius: 4px;">$treatment->customer->name</pre>
                     <ul style="margin-top: 1em; font-size: 0.9em;">
                         <li>직관적인 코드</li>
                         <li>ID로 연결 (이름 변경 무관)</li>
@@ -404,7 +408,8 @@
                 <p><strong>Foreign Key = 다른 테이블의 Primary Key를 참조하는 컬럼</strong></p>
             </div>
 
-            <div class="diagram-container" style="background: #f8f9fa; padding: 2em; border-radius: 8px; margin: 1.5em 0;">
+            <div class="diagram-container"
+                style="background: #f8f9fa; padding: 2em; border-radius: 8px; margin: 1.5em 0;">
                 <table class="table-design" style="max-width: 500px; margin: 0 auto;">
                     <thead>
                         <tr>
@@ -791,14 +796,14 @@ $customerName = $treatment->customer->name;  // VLOOKUP 필요 없음!</code></p
             });
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const sections = document.querySelectorAll('section[id]');
             const navSections = document.querySelectorAll('.nav-section');
             const navLinks = document.querySelectorAll('nav a');
 
             navSections.forEach(navSection => {
                 const title = navSection.querySelector('.section-title');
-                title.addEventListener('click', function(e) {
+                title.addEventListener('click', function (e) {
                     navSections.forEach(ns => {
                         if (ns !== navSection) ns.classList.remove('open');
                     });
@@ -836,4 +841,5 @@ $customerName = $treatment->customer->name;  // VLOOKUP 필요 없음!</code></p
         });
     </script>
 </body>
+
 </html>
