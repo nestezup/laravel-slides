@@ -40,6 +40,9 @@ select {
     line-height: 1.5;
     overflow-x: hidden;
     font-weight: 400;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    /* Prevent overflow for long non-Korean strings */
 }
 
 /* Typography */
