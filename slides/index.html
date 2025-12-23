@@ -19,6 +19,16 @@
             --text-muted: #888888;
             --border-color: #333333;
             --font-main: 'Paperlogy', sans-serif;
+
+            /* Part Colors */
+            --color-part1: #ffc107;
+            /* Amber */
+            --color-part2: #e74c3c;
+            /* Red */
+            --color-part3: #27ae60;
+            /* Green */
+            --color-part4: #a855f7;
+            /* Purple */
         }
 
         * {
@@ -99,14 +109,85 @@
         .bento-item:hover {
             transform: translateY(-5px);
             background-color: var(--bg-card-hover);
-            border-color: var(--primary);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
 
+        /* Part Specific Colors */
+        .bento-item.part-1:hover {
+            border-color: var(--color-part1);
+        }
+
+        .bento-item.part-1 .part-badge {
+            color: var(--color-part1);
+            background: rgba(255, 193, 7, 0.1);
+        }
+
+        .bento-item.part-1:hover .part-badge {
+            background: var(--color-part1);
+            color: #000;
+        }
+
+        .bento-item.part-1 .arrow-icon {
+            color: var(--color-part1);
+        }
+
+        .bento-item.part-2:hover {
+            border-color: var(--color-part2);
+        }
+
+        .bento-item.part-2 .part-badge {
+            color: var(--color-part2);
+            background: rgba(231, 76, 60, 0.1);
+        }
+
+        .bento-item.part-2:hover .part-badge {
+            background: var(--color-part2);
+            color: white;
+        }
+
+        .bento-item.part-2 .arrow-icon {
+            color: var(--color-part2);
+        }
+
+        .bento-item.part-3:hover {
+            border-color: var(--color-part3);
+        }
+
+        .bento-item.part-3 .part-badge {
+            color: var(--color-part3);
+            background: rgba(39, 174, 96, 0.1);
+        }
+
+        .bento-item.part-3:hover .part-badge {
+            background: var(--color-part3);
+            color: white;
+        }
+
+        .bento-item.part-3 .arrow-icon {
+            color: var(--color-part3);
+        }
+
+        .bento-item.part-4:hover {
+            border-color: var(--color-part4);
+        }
+
+        .bento-item.part-4 .part-badge {
+            color: var(--color-part4);
+            background: rgba(168, 85, 247, 0.1);
+        }
+
+        .bento-item.part-4:hover .part-badge {
+            background: var(--color-part4);
+            color: white;
+        }
+
+        .bento-item.part-4 .arrow-icon {
+            color: var(--color-part4);
+        }
+
+
         .part-badge {
             display: inline-block;
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--text-muted);
             padding: 6px 12px;
             border-radius: 20px;
             font-size: 0.8rem;
@@ -114,11 +195,6 @@
             margin-bottom: 20px;
             align-self: flex-start;
             transition: 0.3s;
-        }
-
-        .bento-item:hover .part-badge {
-            background: var(--primary);
-            color: #000;
         }
 
         .bento-content h2 {
@@ -141,7 +217,6 @@
             opacity: 0;
             transform: translateX(-10px);
             transition: all 0.3s ease;
-            color: var(--primary);
         }
 
         .bento-item:hover .arrow-icon {
@@ -185,7 +260,7 @@
 
         <div class="bento-grid">
             <!-- Part 1 -->
-            <a href="basic/part1.html" class="bento-item">
+            <a href="basic/part1.html" class="bento-item part-1">
                 <span class="part-badge">PART 1</span>
                 <div class="bento-content">
                     <h2>개발 환경 세팅</h2>
@@ -195,7 +270,7 @@
             </a>
 
             <!-- Part 2 -->
-            <a href="basic/part2.html" class="bento-item">
+            <a href="basic/part2.html" class="bento-item part-2">
                 <span class="part-badge">PART 2</span>
                 <div class="bento-content">
                     <h2>데이터베이스 구축</h2>
@@ -205,7 +280,7 @@
             </a>
 
             <!-- Part 3 -->
-            <a href="basic/part3.html" class="bento-item">
+            <a href="basic/part3.html" class="bento-item part-3">
                 <span class="part-badge">PART 3</span>
                 <div class="bento-content">
                     <h2>데이터 연결</h2>
@@ -215,7 +290,7 @@
             </a>
 
             <!-- Part 4 -->
-            <a href="basic/part4.html" class="bento-item">
+            <a href="basic/part4.html" class="bento-item part-4">
                 <span class="part-badge">PART 4</span>
                 <div class="bento-content">
                     <h2>대시보드 완성</h2>
