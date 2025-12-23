@@ -35,9 +35,17 @@
                         코딩을 몰라도, 4시간이면 <strong>나만의 웹 시스템</strong>을 만들 수 있습니다.
                     </p>
                     <div class="cta-group" style="display: flex; gap: 16px; flex-wrap: wrap;">
-                        <a href="#apply" class="btn btn-primary btn-lg">선착순 신청하기 <i class="fa-solid fa-arrow-right"
-                                style="margin-left: 10px;"></i></a>
+                        <button class="btn btn-disabled btn-lg" disabled>모집 마감 (오프라인) <i class="fa-solid fa-lock"
+                                style="margin-left: 10px;"></i></button>
                         <a href="#curriculum" class="btn btn-outline btn-lg">커리큘럼 보기</a>
+                    </div>
+                    <!-- Event Info Banner -->
+                    <div
+                        style="margin-top: 30px; padding: 20px; background: rgba(207, 255, 4, 0.1); border: 1px solid var(--primary); border-radius: 8px; display: inline-flex; flex-direction: column; gap: 8px; max-width: 100%;">
+                        <div style="font-weight: 700; color: var(--primary);"><i class="fa-regular fa-calendar"
+                                style="margin-right: 8px;"></i> 2025.12.27 (토) 13:00 ~ 17:00</div>
+                        <div style="color: #fff;"><i class="fa-solid fa-location-dot"
+                                style="margin-right: 8px; color: var(--primary);"></i> 강남역 12번출구 인근</div>
                     </div>
                     <div
                         style="margin-top: 30px; font-size: 0.9rem; color: var(--text-muted); display: flex; align-items: center; gap: 10px;">
@@ -158,6 +166,21 @@
         </div>
     </section>
 
+    </section>
+
+    <!-- Atmosphere Section -->
+    <section class="section-padding" style="background: var(--bg-main);">
+        <div class="container">
+            <h2 class="text-center" style="margin-bottom: 60px;">분위기 좋은 공간에서<br>즐겁게 스터디해봐요.</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px;">
+                <img src="images/room.JPG" alt="Study Room Atmosphere"
+                    style="width: 100%; border-radius: 12px; border: 1px solid var(--border-color);">
+                <img src="images/view.JPG" alt="Gangnam View"
+                    style="width: 100%; border-radius: 12px; border: 1px solid var(--border-color);">
+            </div>
+        </div>
+    </section>
+
     <!-- Curriculum -->
     <section class="section-padding" id="curriculum">
         <div class="container">
@@ -224,7 +247,8 @@
             <div
                 style="display: inline-block; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
                 <p style="color: #000; font-size: 1.1rem; margin-bottom: 20px;">[4시간 완성] 엑셀 탈출 웹 시스템 구축 강의</p>
-                <a href="#" class="btn btn-black btn-lg" style="width: 100%;">지금 바로 신청하기</a>
+                <button class="btn btn-disabled btn-lg" style="width: 100%; background: #ccc; cursor: not-allowed;"
+                    disabled>현재 모집이 마감되었습니다</button>
                 <p style="color: #666; font-size: 0.9rem; margin-top: 15px;">30일 무제한 질문권 | 소스코드 포함</p>
             </div>
         </div>
@@ -233,7 +257,7 @@
     <footer style="padding: 60px 0; border-top: 1px solid #222; text-align: center;">
         <div class="container">
             <h4 style="color: white; margin-bottom: 10px;">Code Serendipity</h4>
-            <p style="font-size: 0.9rem;">Copyright © 2024. All rights reserved.</p>
+            <p style="font-size: 0.9rem;">Copyright © 2025. All rights reserved.</p>
         </div>
     </footer>
 
