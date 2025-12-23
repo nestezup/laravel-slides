@@ -1,0 +1,540 @@
+/* 공통 스타일 - Track A 슬라이드 */
+
+/* 폰트 */
+@font-face {
+    font-family: 'Paperlogy';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-1Thin.woff2') format('woff2');
+    font-weight: 100;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Paperlogy';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-2ExtraLight.woff2') format('woff2');
+    font-weight: 200;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Paperlogy';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-3Light.woff2') format('woff2');
+    font-weight: 300;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Paperlogy';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-4Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Paperlogy';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-5Medium.woff2') format('woff2');
+    font-weight: 500;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Paperlogy';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-6SemiBold.woff2') format('woff2');
+    font-weight: 600;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Paperlogy';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-7Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Paperlogy';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-8ExtraBold.woff2') format('woff2');
+    font-weight: 800;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Paperlogy';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-9Black.woff2') format('woff2');
+    font-weight: 900;
+    font-display: swap;
+}
+
+/* 리셋 및 기본 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Paperlogy', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 22px;
+    line-height: 1.6;
+    color: #333;
+    background: #f5f5f5;
+}
+
+/* 네비게이션 */
+nav {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 320px;
+    height: 100vh;
+    background: #2c3e50;
+    color: white;
+    padding: 20px;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+nav h1 {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--accent-color);
+    font-weight: 700;
+}
+
+/* 아코디언 네비게이션 */
+.nav-accordion {
+    list-style: none;
+}
+
+.nav-section {
+    margin-bottom: 5px;
+}
+
+.nav-section .section-title {
+    color: var(--section-title-color);
+    text-decoration: none;
+    display: block;
+    padding: 10px 10px;
+    border-radius: 5px;
+    font-size: 0.95em;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.nav-section .section-title:hover,
+.nav-section.open .section-title {
+    background: var(--section-title-hover-bg);
+}
+
+.nav-section .section-title.active {
+    background: var(--accent-color);
+    color: var(--accent-text-color);
+}
+
+.nav-section .subsections {
+    list-style: none;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    padding-left: 0;
+}
+
+.nav-section.open .subsections {
+    max-height: 500px;
+    margin-top: 5px;
+}
+
+.nav-section .subsections li a {
+    color: #ecf0f1;
+    text-decoration: none;
+    display: block;
+    padding: 8px 10px 8px 20px;
+    font-size: 0.75em;
+    border-radius: 5px;
+    transition: all 0.3s;
+}
+
+.nav-section .subsections li a:hover,
+.nav-section .subsections li a.active {
+    background: var(--accent-color);
+    color: var(--accent-text-color);
+    text-decoration: none;
+}
+
+/* 메인 콘텐츠 */
+main {
+    margin-left: 320px;
+    padding: 40px;
+    max-width: 1200px;
+}
+
+section {
+    background: white;
+    padding: 40px;
+    margin-bottom: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    scroll-margin-top: 20px;
+}
+
+/* 타이틀 섹션 */
+section.title-section {
+    text-align: center;
+    padding: 80px 40px;
+    background: white;
+    color: #2c3e50;
+}
+
+section.title-section h1 {
+    font-size: 56px;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+section.title-section h2 {
+    font-size: 36px;
+    font-weight: 400;
+    color: #34495e;
+}
+
+section.title-section p {
+    font-size: 24px;
+    color: #7f8c8d;
+    margin-top: 10px;
+}
+
+/* 텍스트 하이라이트 */
+.text-highlight {
+    background: #fff3cd;
+    padding: 0.1em 0.4em;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.text-highlight.blue {
+    background: #d5e8f7;
+    color: #2980b9;
+}
+
+.text-highlight.yellow {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.text-highlight.red {
+    background: #fadbd8;
+    color: #c0392b;
+}
+
+.text-highlight.green {
+    background: #d4edda;
+    color: #155724;
+}
+
+/* 중간 섹션 타이틀 (섹션 구분용) */
+section.section-divider {
+    text-align: center;
+    padding: 60px 40px;
+    background: white;
+}
+
+section.section-divider h2 {
+    font-size: 48px;
+    color: var(--accent-color);
+    margin-bottom: 0.5em;
+    font-weight: 700;
+}
+
+section.section-divider p {
+    font-size: 22px;
+    color: #7f8c8d;
+    margin-top: 0;
+}
+
+/* 헤딩 */
+h1 {
+    font-size: 48px;
+    color: #2c3e50;
+    margin-bottom: 0.5em;
+    font-weight: 700;
+}
+
+h2 {
+    font-size: 40px;
+    color: #2c3e50;
+    margin-bottom: 0.5em;
+    font-weight: 600;
+}
+
+h3 {
+    font-size: 28px;
+    color: #34495e;
+    margin: 1.5em 0 0.5em;
+    font-weight: 600;
+}
+
+/* 링크 */
+a {
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* 코드 블럭 */
+.code-block {
+    background: #1e1e1e;
+    border-radius: 8px;
+    padding: 1.5em;
+    margin: 1em 0;
+    overflow-x: auto;
+    position: relative;
+}
+
+.code-block pre {
+    margin: 0;
+    font-family: 'Courier New', Consolas, monospace;
+    font-size: 0.85em;
+    line-height: 1.5;
+}
+
+.code-block code {
+    color: #d4d4d4;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.copy-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.7em;
+}
+
+.copy-button:hover {
+    background: #2980b9;
+}
+
+/* 하이라이트 박스 */
+.highlight {
+    background: #e8f4fd;
+    border-left: 4px solid #3498db;
+    padding: 1em 1.5em;
+    margin: 1em 0;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 팁 박스 */
+.tip {
+    background: #fff8e1;
+    border-left: 4px solid #ffc107;
+    padding: 1em 1.5em;
+    margin: 1em 0;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 2단 레이아웃 */
+.two-column {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2em;
+    margin: 1.5em 0;
+}
+
+/* 테이블 */
+.comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1em 0;
+}
+
+.comparison-table th,
+.comparison-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.comparison-table th {
+    background: #3498db;
+    color: white;
+    font-weight: 600;
+}
+
+.comparison-table tr:hover {
+    background: #f5f5f5;
+}
+
+/* 체크리스트 */
+.checklist {
+    list-style: none;
+    padding-left: 0;
+}
+
+.checklist li {
+    padding: 0.5em 0;
+    padding-left: 2em;
+    position: relative;
+}
+
+.checklist li::before {
+    content: "☐";
+    position: absolute;
+    left: 0;
+    font-size: 1.2em;
+}
+
+/* 스텝 넘버 */
+.step-number {
+    display: inline-block;
+    min-width: 32px;
+    width: 32px;
+    height: 32px;
+    background: var(--accent-color);
+    color: white;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 32px;
+    font-weight: 700;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.steps-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.steps-list li {
+    margin-bottom: 1.5em;
+    display: flex;
+    align-items: flex-start;
+}
+
+.steps-list .step-content {
+    flex: 1;
+}
+
+.steps-list .step-content .code-block {
+    margin-top: 0.5em;
+}
+
+/* 스키마 카드 */
+.schema-card {
+    border: 2px solid #3498db;
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 1em 0;
+}
+
+.schema-card.red {
+    border-color: #e74c3c;
+}
+
+.schema-card.green {
+    border-color: #27ae60;
+}
+
+.schema-card-header {
+    background: #3498db;
+    color: white;
+    padding: 0.8em 1em;
+    font-weight: 600;
+    font-family: 'Courier New', monospace;
+}
+
+.schema-card.red .schema-card-header {
+    background: #e74c3c;
+}
+
+.schema-card.green .schema-card-header {
+    background: #27ae60;
+}
+
+.schema-card-body {
+    padding: 1em;
+    background: white;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+}
+
+.schema-card-body .column {
+    padding: 0.3em 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+}
+
+/* 뱃지 */
+.badge-pk {
+    background: #f39c12;
+    color: white;
+    padding: 0.1em 0.4em;
+    border-radius: 3px;
+    font-size: 0.7em;
+    font-weight: 600;
+}
+
+.badge-fk {
+    background: #9b59b6;
+    color: white;
+    padding: 0.1em 0.4em;
+    border-radius: 3px;
+    font-size: 0.7em;
+    font-weight: 600;
+}
+
+/* 테이블 디자인 */
+.table-design {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1em 0;
+    font-size: 0.9em;
+}
+
+.table-design th,
+.table-design td {
+    padding: 12px 15px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.table-design th {
+    background: #3498db;
+    color: white;
+    font-weight: 600;
+}
+
+.table-design code {
+    background: #f4f4f4;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+}
+
+/* 반응형 */
+@media (max-width: 1024px) {
+    nav {
+        width: 280px;
+    }
+    main {
+        margin-left: 280px;
+        padding: 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    nav {
+        position: relative;
+        width: 100%;
+        height: auto;
+    }
+    main {
+        margin-left: 0;
+        padding: 20px;
+    }
+    .two-column {
+        grid-template-columns: 1fr;
+    }
+}

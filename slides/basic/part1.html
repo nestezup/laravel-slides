@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Serendipity - 업무 자동화 마스터 클래스</title>
+    <link rel="stylesheet" href="common.css">
+    <style>
+        /* Part 1 테마 색상 */
+        :root {
+            --accent-color: #ffc107;
+            --accent-text-color: #2c3e50;
+            --section-title-color: #3498db;
+            --section-title-hover-bg: rgba(52, 152, 219, 0.2);
+        }
+
+        /* Part 1 전용 스타일 */
+        .workflow-diagram {
+            background: #f8f9fa;
+            padding: 1.2em 1.5em;
+            border-radius: 8px;
+            font-family: 'Paperlogy', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            text-align: center;
+            margin: 1.2em 0;
+            border: 2px solid #3498db;
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #2c3e50;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .architecture-diagram {
+            background: #f8f9fa;
+            padding: 1.5em;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            white-space: pre;
+            overflow-x: auto;
+            margin: 1em 0;
+            border: 1px solid #e1e4e8;
+            line-height: 1.4;
+        }
+
+        /* HTML Diagram Styles */
+        .diagram-container {
+            background: #f8f9fa;
+            padding: 2em;
+            border-radius: 8px;
+            margin: 1em 0;
+            border: 1px solid #e1e4e8;
+        }
+
+        .stack-diagram {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            max-width: 200px;
+            margin: 0 auto;
+        }
+
+        .stack-box {
+            background: white;
+            border: 2px solid #3498db;
+            padding: 0.8em 1em;
+            text-align: center;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .stack-box:first-child {
+            border-radius: 8px 8px 0 0;
+        }
+
+        .stack-box:last-child {
+            border-radius: 0 0 8px 8px;
+        }
+
+        .stack-box + .stack-box {
+            border-top: none;
+        }
+
+        .stack-box.highlight-green {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+
+        .stack-box.highlight-blue {
+            background: #cce5ff;
+            border-color: #3498db;
+        }
+
+        .stack-box.split {
+            display: flex;
+        }
+
+        .stack-box.split > div {
+            flex: 1;
+            padding: 0.5em;
+        }
+
+        .stack-box.split > div:first-child {
+            border-right: 2px solid #3498db;
+        }
+
+        .nested-box {
+            background: #f8f9fa;
+            border: 2px solid #2c3e50;
+            border-radius: 12px;
+            padding: 1.5em;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .nested-box .outer-label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 1em;
+            text-align: center;
+        }
+
+        .nested-box .inner-box {
+            background: #cce5ff;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            padding: 1.2em;
+            margin-bottom: 1em;
+        }
+
+        .nested-box .inner-label {
+            font-weight: 600;
+            color: #2980b9;
+            margin-bottom: 0.5em;
+        }
+
+        .nested-box .inner-content {
+            font-size: 1em;
+            color: #34495e;
+        }
+
+        .nested-box .note {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 1em;
+        }
+
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            flex-wrap: wrap;
+            padding: 1em 0;
+        }
+
+        .flow-box {
+            background: white;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            padding: 1em 1.5em;
+            text-align: center;
+            min-width: 100px;
+        }
+
+        .flow-box .label {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .flow-box .sub-label {
+            font-size: 1em;
+            color: #7f8c8d;
+            margin-top: 0.3em;
+        }
+
+        .flow-arrow {
+            font-size: 1.5em;
+            color: #3498db;
+            padding: 0 0.5em;
+        }
+
+        .flow-arrow.down {
+            display: block;
+            text-align: center;
+            padding: 0.5em 0;
+        }
+
+        .vertical-flow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+        }
+
+        .crud-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .crud-box {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            padding: 0.8em;
+            text-align: center;
+        }
+
+        .crud-box:first-child {
+            border-radius: 8px 0 0 8px;
+        }
+
+        .crud-box:last-child {
+            border-radius: 0 8px 8px 0;
+        }
+
+        .crud-box + .crud-box {
+            border-left: none;
+        }
+
+        .crud-box .kr {
+            font-weight: 600;
+            color: #155724;
+        }
+
+        .crud-box .en {
+            font-size: 1em;
+            color: #28a745;
+        }
+
+        .arch-diagram {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5em;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .arch-layer {
+            background: white;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            padding: 1em;
+            text-align: center;
+        }
+
+        .arch-layer.browser {
+            background: #fff3cd;
+            border-color: #ffc107;
+        }
+
+        .arch-layer.container {
+            background: #cce5ff;
+            border-color: #3498db;
+            padding: 0;
+        }
+
+        .arch-layer .layer-title {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .arch-layer .layer-sub {
+            font-size: 1em;
+            color: #7f8c8d;
+        }
+
+        .container-inner {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .container-inner .inner-layer {
+            padding: 0.8em;
+            border-bottom: 1px solid #3498db;
+        }
+
+        .container-inner .inner-layer:last-child {
+            border-bottom: none;
+        }
+
+        .container-inner .inner-layer:first-child {
+            border-radius: 6px 6px 0 0;
+        }
+
+        .container-inner .inner-layer:last-child {
+            border-radius: 0 0 6px 6px;
+        }
+
+        .arch-arrow {
+            text-align: center;
+            font-size: 1.2em;
+            color: #3498db;
+        }
+
+        .request-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #7f8c8d;
+            font-size: 1em;
+            margin-top: 0.5em;
+        }
+
+        .request-label .arrow {
+            font-size: 1.2em;
+            color: #3498db;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1em 0;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .comparison-table th {
+            background: #3498db;
+            color: white;
+            font-weight: 600;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .time-badge {
+            display: inline-block;
+            background: #6c757d;
+            color: white;
+            padding: 0.3em 0.8em;
+            border-radius: 20px;
+            font-size: 1em;
+            margin-left: 0.5em;
+        }
+
+        .schedule-item {
+            display: flex;
+            align-items: center;
+            padding: 0.8em 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .schedule-time {
+            font-weight: 700;
+            color: #3498db;
+            width: 80px;
+        }
+
+        .schedule-content {
+            flex: 1;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            margin: 1em 0;
+        }
+
+        .tech-layer {
+            background: #3498db;
+            color: white;
+            padding: 1em;
+            text-align: center;
+            border: 1px solid #2980b9;
+        }
+
+        .tech-layer:first-child {
+            border-radius: 8px 8px 0 0;
+        }
+
+        .tech-layer:last-child {
+            border-radius: 0 0 8px 8px;
+        }
+
+        .tech-layer .label {
+            font-size: 1em;
+            color: #bdc3c7;
+        }
+    </style>
+</head>
+<body>
+    <!-- 네비게이션 -->
+    <nav>
+        <h1>업무 자동화 마스터 클래스</h1>
+        <ul class="nav-accordion">
+            <li class="nav-section">
+                <a href="#intro" class="section-title">시작하기</a>
+                <ul class="subsections">
+                    <li><a href="#schedule">오늘의 여정</a></li>
+                    <li><a href="#before-after">Before & After</a></li>
+                    <li><a href="#preview">완성본 미리보기</a></li>
+                </ul>
+            </li>
+            <li class="nav-section">
+                <a href="#tech-stack" class="section-title">기술 스택</a>
+                <ul class="subsections">
+                    <li><a href="#docker">Docker</a></li>
+                    <li><a href="#sail">Laravel Sail</a></li>
+                    <li><a href="#laravel">Laravel</a></li>
+                    <li><a href="#filament">Filament</a></li>
+                </ul>
+            </li>
+            <li class="nav-section">
+                <a href="#architecture" class="section-title">아키텍처</a>
+                <ul class="subsections">
+                    <li><a href="#comparison">엑셀 vs 우리 시스템</a></li>
+                    <li><a href="#today-build">오늘 만들 것</a></li>
+                </ul>
+            </li>
+            <li class="nav-section">
+                <a href="#setup" class="section-title">환경 설정</a>
+                <ul class="subsections">
+                    <li><a href="#env-check">환경 확인</a></li>
+                    <li><a href="#filament-install">Filament 설치</a></li>
+                    <li><a href="#checkpoint">체크포인트</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- 메인 콘텐츠 -->
+    <main>
+        <!-- 타이틀 -->
+        <section class="title-section" id="intro">
+            <h1>Code Serendipity</h1>
+            <h2>Track A: 업무 자동화 마스터 클래스</h2>
+            <p><span class="text-highlight">엑셀 지옥 탈출! AI와 함께 짓는 나만의 데이터 사령부</span></p>
+            <p style="margin-top: 2em; color: #95a5a6;">2025.12.27</p>
+        </section>
+
+        <!-- 오늘의 여정 -->
+        <section id="schedule">
+            <h2>스터디 시간표</h2>
+            <div class="schedule-item">
+                <span class="schedule-time">13:00</span>
+                <span class="schedule-content"><strong>PART 1</strong> - 오프닝 + 개념</span>
+            </div>
+            <div class="schedule-item">
+                <span class="schedule-time">14:00</span>
+                <span class="schedule-content"><strong>PART 2</strong> - 고객 테이블</span>
+            </div>
+            <div class="schedule-item">
+                <span class="schedule-time">15:00</span>
+                <span class="schedule-content"><strong>BREAK</strong></span>
+            </div>
+            <div class="schedule-item">
+                <span class="schedule-time">15:10</span>
+                <span class="schedule-content"><strong>PART 3</strong> - 시술내역 테이블</span>
+            </div>
+            <div class="schedule-item">
+                <span class="schedule-time">16:00</span>
+                <span class="schedule-content"><strong>PART 4</strong> - 대시보드</span>
+            </div>
+            <!-- <div class="schedule-item">
+                <span class="schedule-time">16:40</span>
+                <span class="schedule-content"><strong>CLOSING</strong></span>
+            </div> -->
+        </section>
+
+        <!-- Before & After -->
+        <section id="before-after">
+            <h2>Before & After</h2>
+            <div class="two-column">
+                <div style="background: #fff5f5; padding: 1.5em; border-radius: 8px; border: 2px solid #e74c3c;">
+                    <h3 style="color: #e74c3c;">Before</h3>
+                    <ul>
+                        <li>엑셀 파일</li>
+                        <li>VLOOKUP, SUMIF 수식</li>
+                        <li>수동 집계</li>
+                        <li>파일 버전 관리</li>
+                    </ul>
+                </div>
+                <div style="background: #f0fff4; padding: 1.5em; border-radius: 8px; border: 2px solid #28a745;">
+                    <h3 style="color: #28a745;">After</h3>
+                    <ul>
+                        <li>웹 시스템</li>
+                        <li>자동 연결</li>
+                        <li>실시간 통계</li>
+                        <li>데이터베이스</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 완성본 미리보기 -->
+        <section id="preview">
+            <h2>완성본 미리보기</h2>
+
+            <h3>대시보드</h3>
+            <div class="practice-note">
+                <p><strong>[스크린샷: 대시보드]</strong></p>
+                <ul>
+                    <li>통계 카드 4개</li>
+                    <li>최근 시술 내역</li>
+                    <li>실시간 업데이트</li>
+                </ul>
+            </div>
+
+            <h3>고객 관리</h3>
+            <div class="practice-note">
+                <p><strong>[스크린샷: 고객 목록]</strong></p>
+                <ul>
+                    <li>검색, 필터, 정렬</li>
+                    <li>추가, 수정, 삭제</li>
+                    <li>시술 내역 연결</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 기술 스택 -->
+        <section id="tech-stack" class="section-divider">
+            <h2>기술 스택</h2>
+            <p>오늘 사용할 도구들을 알아봅시다</p>
+        </section>
+
+        <!-- 오늘 사용할 기술 스택 -->
+        <section id="tech-stack-overview">
+            <h2>오늘 사용할 기술 스택</h2>
+            <ul>
+                <li><strong>Laravel</strong> - PHP Framework</li>
+                <li><strong>Filament</strong> - Admin Panel</li>
+                <li><strong>Sail</strong> - Docker 환경</li>
+                <li><strong>Docker</strong> - 컨테이너</li>
+                <li><strong>MySQL / Redis</strong> - 데이터베이스</li>
+            </ul>
+        </section>
+
+        <!-- Docker -->
+        <section id="docker">
+            <h2>Docker란?</h2>
+            <div class="highlight">
+                <p><strong>컨테이너 가상화 플랫폼</strong></p>
+                <p>애플리케이션 실행에 필요한 모든 것을 하나의 패키지(컨테이너)로 묶는 기술</p>
+            </div>
+
+            <h3>왜 필요한가?</h3>
+            <div class="workflow-diagram">
+                <span class="text-highlight">제 컴퓨터에서는 되는데요...</span>
+            </div>
+            <div class="diagram-container">
+                <div class="flow-diagram">
+                    <div class="flow-box" style="background: #fff5f5; border-color: #e74c3c;">
+                        <div class="label" style="color: #e74c3c;">문제</div>
+                        <div class="sub-label">PHP 버전 다름</div>
+                        <div class="sub-label">MySQL 설정 다름</div>
+                        <div class="sub-label">라이브러리 없음</div>
+                    </div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-box" style="background: #d4edda; border-color: #28a745;">
+                        <div class="label" style="color: #28a745;">Docker</div>
+                        <div class="sub-label">컨테이너에 환경 포함</div>
+                    </div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-box" style="background: #f0fff4; border-color: #28a745;">
+                        <div class="label" style="color: #28a745;">해결</div>
+                        <div class="sub-label">어디서나 동일 동작</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>가상머신 vs 컨테이너</h3>
+            <div class="two-column">
+                <div style="text-align: center;">
+                    <h4>가상머신 (VM)</h4>
+                    <div class="diagram-container">
+                        <div class="stack-diagram">
+                            <div class="stack-box split">
+                                <div>App A</div>
+                                <div>App B</div>
+                            </div>
+                            <div class="stack-box split">
+                                <div>OS</div>
+                                <div>OS</div>
+                            </div>
+                            <div class="stack-box">Hypervisor</div>
+                            <div class="stack-box">Host OS</div>
+                            <div class="stack-box">Hardware</div>
+                        </div>
+                    </div>
+                    <p><strong style="color: #e74c3c;">무겁다</strong></p>
+                </div>
+                <div style="text-align: center;">
+                    <h4>컨테이너</h4>
+                    <div class="diagram-container">
+                        <div class="stack-diagram">
+                            <div class="stack-box split">
+                                <div>App A</div>
+                                <div>App B</div>
+                            </div>
+                            <div class="stack-box highlight-green">Container Runtime</div>
+                            <div class="stack-box">Host OS</div>
+                            <div class="stack-box">Hardware</div>
+                        </div>
+                    </div>
+                    <p><strong style="color: #28a745;">가볍다</strong></p>
+                </div>
+            </div>
+
+            <h3>핵심 개념</h3>
+            <div class="tip">
+                <p><strong>Image (이미지)</strong> - 컨테이너의 설계도, 읽기 전용</p>
+                <p><strong>Container (컨테이너)</strong> - 이미지를 실행한 인스턴스, 실제로 동작하는 환경</p>
+                <p><strong>Volume (볼륨)</strong> - 데이터 저장소, 컨테이너 삭제해도 데이터 유지</p>
+            </div>
+
+            <h3>기본 명령어</h3>
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">복사</button>
+                <pre><code># 컨테이너 목록
+docker ps
+
+# 컨테이너 실행
+docker run [이미지명]
+
+# 컨테이너 중지
+docker stop [컨테이너명]
+
+# 이미지 목록
+docker images</code></pre>
+            </div>
+        </section>
+
+        <!-- Laravel Sail -->
+        <section id="sail">
+            <h2>Laravel Sail이란?</h2>
+            <div class="highlight">
+                <p><strong>Laravel 공식 Docker 개발 환경</strong></p>
+                <p>Docker 설정을 직접 하지 않아도 Laravel 개발에 필요한 환경을 제공</p>
+            </div>
+
+            <h3>포함된 서비스</h3>
+            <div class="two-column">
+                <div>
+                    <ul>
+                        <li>PHP 8.x</li>
+                        <li>MySQL 8.0</li>
+                        <li>Redis</li>
+                        <li>Meilisearch</li>
+                    </ul>
+                </div>
+                <div>
+                    <ul>
+                        <li>Composer</li>
+                        <li>Node.js / npm</li>
+                        <li>Mailpit</li>
+                        <li>Selenium</li>
+                    </ul>
+                </div>
+            </div>
+            <p>필요한 것만 선택해서 사용 가능</p>
+
+            <h3>서버 관리 명령어</h3>
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">복사</button>
+                <pre><code># 서버 시작 (백그라운드)
+sail up -d
+
+# 서버 중지
+sail down
+
+# 상태 확인
+sail ps</code></pre>
+            </div>
+
+            <h3>개발 명령어</h3>
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">복사</button>
+                <pre><code># Laravel 명령어 실행
+sail artisan [명령어]
+
+# Composer 패키지 설치
+sail composer require [패키지명]
+
+# npm 명령어
+sail npm run dev</code></pre>
+            </div>
+
+            <h3>Docker vs Sail 명령어 비교</h3>
+            <p>Docker 명령어를 직접 쓰면 복잡하지만, Sail이 이를 간단하게 감싸줍니다.</p>
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">복사</button>
+                <pre><code># 순수 Docker 명령어
+docker exec -it salon-crm-laravel.test-1 composer require filament/filament
+
+# Sail 사용
+sail composer require filament/filament</code></pre>
+            </div>
+            <div class="tip">
+                <p>컨테이너 이름, exec -it 옵션 등을 매번 입력할 필요 없이 <code>sail</code> 한 단어로 해결!</p>
+            </div>
+
+            <h3>내 컴퓨터 vs Docker</h3>
+            <div class="diagram-container">
+                <div class="nested-box">
+                    <div class="outer-label">내 컴퓨터 (Host)</div>
+                    <div class="inner-box">
+                        <div class="inner-label">Docker Container (Sail)</div>
+                        <div class="inner-content">
+                            PHP, MySQL, Redis...<br>
+                            Laravel 프로젝트
+                        </div>
+                    </div>
+                    <div class="note">내 컴퓨터 환경은 건드리지 않음</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Laravel -->
+        <section id="laravel">
+            <h2>Laravel이란?</h2>
+            <div class="highlight">
+                <p><strong>PHP 웹 애플리케이션 프레임워크</strong></p>
+                <p>2011년 Taylor Otwell이 만듦. 현재 가장 인기 있는 PHP 프레임워크</p>
+            </div>
+
+            <h3>프레임워크란?</h3>
+            <p>애플리케이션 개발을 위한 기본 구조와 도구 모음</p>
+            <div class="diagram-container">
+                <div class="flow-diagram">
+                    <div class="flow-box" style="background: #fff5f5; border-color: #e74c3c;">
+                        <div class="label" style="color: #e74c3c;">직접 만들기</div>
+                        <div class="sub-label">벽돌부터 쌓기</div>
+                        <div class="sub-label">모든 것 직접</div>
+                        <div class="sub-label">시간 오래 걸림</div>
+                    </div>
+                    <span class="flow-arrow">vs</span>
+                    <div class="flow-box" style="background: #f0fff4; border-color: #28a745;">
+                        <div class="label" style="color: #28a745;">프레임워크 사용</div>
+                        <div class="sub-label">조립식 건물</div>
+                        <div class="sub-label">기본 제공</div>
+                        <div class="sub-label">빠른 개발</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>MVC 패턴</h3>
+            <div class="diagram-container">
+                <div class="flow-diagram">
+                    <div class="flow-box">
+                        <div class="label">View</div>
+                        <div class="sub-label">(화면)</div>
+                    </div>
+                    <span class="flow-arrow">←</span>
+                    <div class="flow-box" style="background: #cce5ff;">
+                        <div class="label">Controller</div>
+                        <div class="sub-label">(중간자)</div>
+                    </div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-box">
+                        <div class="label">Model</div>
+                        <div class="sub-label">(데이터)</div>
+                    </div>
+                </div>
+                <div class="request-label">
+                    <span class="arrow">↑</span>
+                    <span>Request (요청)</span>
+                </div>
+            </div>
+            <ul>
+                <li><strong>Model:</strong> 데이터 구조와 비즈니스 로직</li>
+                <li><strong>View:</strong> 사용자에게 보여지는 화면</li>
+                <li><strong>Controller:</strong> Model과 View를 연결</li>
+            </ul>
+
+            <h3>디렉토리 구조</h3>
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">복사</button>
+                <pre><code>laravel-project/
+├── app/
+│   ├── Models/          ← 데이터 모델
+│   ├── Http/Controllers ← 컨트롤러
+│   └── Filament/        ← Filament 리소스
+├── database/
+│   └── migrations/      ← DB 설계도
+├── resources/
+│   └── views/           ← 화면 템플릿
+├── routes/
+│   └── web.php          ← URL 라우팅
+└── .env                 ← 환경 설정</code></pre>
+            </div>
+
+            <h3>Artisan CLI</h3>
+            <p>Laravel의 명령줄 도구</p>
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">복사</button>
+                <pre><code># 모델 생성
+sail artisan make:model Customer
+
+# 마이그레이션 생성
+sail artisan make:migration create_customers_table
+
+# 마이그레이션 실행
+sail artisan migrate
+
+# 캐시 초기화
+sail artisan cache:clear</code></pre>
+            </div>
+
+            <h3>Eloquent ORM</h3>
+            <div class="highlight">
+                <p><strong>Object-Relational Mapping</strong></p>
+                <p>SQL을 직접 작성하지 않고 PHP 객체로 데이터베이스를 다룸</p>
+            </div>
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">복사</button>
+                <pre><code>// SQL
+SELECT * FROM customers WHERE id = 1;
+
+// Eloquent
+Customer::find(1);
+
+// SQL
+SELECT * FROM customers WHERE gender = '여';
+
+// Eloquent
+Customer::where('gender', '여')->get();</code></pre>
+            </div>
+        </section>
+
+        <!-- Filament -->
+        <section id="filament">
+            <h2>Filament이란?</h2>
+            <div class="highlight">
+                <p><strong>Laravel Admin Panel 패키지</strong></p>
+                <p>Model만 정의하면 CRUD 화면을 자동으로 생성</p>
+                <p>무료 / 오픈소스 / 활발한 커뮤니티</p>
+            </div>
+
+            <h3>CRUD 자동 생성</h3>
+            <p>CRUD = Create, Read, Update, Delete</p>
+            <div class="diagram-container">
+                <div class="vertical-flow">
+                    <div class="flow-box" style="min-width: 250px;">
+                        <div class="label">Customer Model</div>
+                    </div>
+                    <span class="flow-arrow down">↓</span>
+                    <div class="flow-box" style="min-width: 250px; background: #cce5ff;">
+                        <div class="label">Filament Resource</div>
+                    </div>
+                    <span class="flow-arrow down">↓</span>
+                    <div class="crud-grid">
+                        <div class="crud-box">
+                            <div class="kr">목록</div>
+                            <div class="en">List</div>
+                        </div>
+                        <div class="crud-box">
+                            <div class="kr">생성</div>
+                            <div class="en">Create</div>
+                        </div>
+                        <div class="crud-box">
+                            <div class="kr">수정</div>
+                            <div class="en">Edit</div>
+                        </div>
+                        <div class="crud-box">
+                            <div class="kr">삭제</div>
+                            <div class="en">Delete</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tip">
+                <p>한 줄 명령어로 전부 생성</p>
+            </div>
+
+            <h3>주요 컴포넌트</h3>
+            <ul>
+                <li><strong>Resource</strong> - 하나의 Model에 대한 Admin 화면 세트</li>
+                <li><strong>Form</strong> - 데이터 입력/수정 폼</li>
+                <li><strong>Table</strong> - 목록 화면 (검색, 필터, 정렬)</li>
+                <li><strong>Widget</strong> - 대시보드 컴포넌트 (통계, 차트)</li>
+            </ul>
+
+            <h3>설치 명령어</h3>
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">복사</button>
+                <pre><code># 패키지 설치
+sail composer require filament/filament
+
+# 초기 설정
+sail artisan filament:install --panels
+
+# 관리자 계정 생성
+sail artisan make:filament-user
+
+# Resource 생성
+sail artisan make:filament-resource Customer --generate</code></pre>
+            </div>
+        </section>
+
+        <!-- 아키텍처 -->
+        <section id="architecture" class="section-divider">
+            <h2>아키텍처</h2>
+            <p>전체 구조를 이해해봅시다</p>
+        </section>
+
+        <!-- 전체 아키텍처 -->
+        <section id="arch-diagram">
+            <h2>전체 아키텍처</h2>
+            <div class="diagram-container">
+                <div class="arch-diagram">
+                    <div class="arch-layer browser">
+                        <div class="layer-title">브라우저</div>
+                        <div class="layer-sub">localhost/admin</div>
+                    </div>
+                    <div class="arch-arrow">↓</div>
+                    <div class="arch-layer container">
+                        <div style="background: #2980b9; color: white; padding: 0.5em; border-radius: 6px 6px 0 0; font-weight: 600;">Docker Container</div>
+                        <div class="container-inner">
+                            <div class="inner-layer">
+                                <div class="layer-title">Filament</div>
+                                <div class="layer-sub">(Admin Panel UI)</div>
+                            </div>
+                            <div class="inner-layer">
+                                <div class="layer-title">Laravel</div>
+                                <div class="layer-sub">(Router → Controller → Model)</div>
+                            </div>
+                            <div class="inner-layer" style="background: #d4edda;">
+                                <div class="layer-title">MySQL Database</div>
+                                <div class="layer-sub">(customers, treatments tables)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 엑셀 vs 우리 시스템 -->
+        <section id="comparison">
+            <h2>엑셀 vs 우리 시스템</h2>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>항목</th>
+                        <th>엑셀</th>
+                        <th>Laravel + Filament</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>데이터 연결</td>
+                        <td>VLOOKUP 수식</td>
+                        <td>Relationship</td>
+                    </tr>
+                    <tr>
+                        <td>데이터 무결성</td>
+                        <td>아무거나 입력</td>
+                        <td>타입 검증</td>
+                    </tr>
+                    <tr>
+                        <td>동시 편집</td>
+                        <td>충돌 발생</td>
+                        <td>웹 기반 실시간</td>
+                    </tr>
+                    <tr>
+                        <td>버전 관리</td>
+                        <td>파일명에 날짜</td>
+                        <td>Migration + Git</td>
+                    </tr>
+                    <tr>
+                        <td>통계/집계</td>
+                        <td>SUMIF, COUNTIF</td>
+                        <td>Eloquent Query</td>
+                    </tr>
+                    <tr>
+                        <td>접근성</td>
+                        <td>파일 공유 필요</td>
+                        <td>URL만 있으면 접속</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 오늘 만들 것 -->
+        <section id="today-build">
+            <h2>오늘 만들 것</h2>
+
+            <h3>PART 2: 고객 테이블</h3>
+            <ul>
+                <li><strong>고객</strong> - 이름, 연락처, 생년월일, 성별, 메모</li>
+                <li>Migration, Model, Filament Resource</li>
+            </ul>
+
+            <h3>PART 3: 시술내역 테이블</h3>
+            <ul>
+                <li><strong>시술내역</strong> - 고객 연결, 시술 종류, 가격</li>
+                <li>Foreign Key로 고객과 연결</li>
+            </ul>
+
+            <h3>PART 4: 대시보드</h3>
+            <ul>
+                <li>통계 카드 (고객 수, 매출, 시술 건수)</li>
+                <li>최근 시술 내역 테이블</li>
+            </ul>
+        </section>
+
+        <!-- 환경 설정 -->
+        <section id="setup" class="section-divider">
+            <h2>환경 설정</h2>
+            <p>Filament를 설치하고 확인해봅시다</p>
+        </section>
+
+        <!-- 환경 확인 -->
+        <section id="env-check">
+            <h2>환경 확인</h2>
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">복사</button>
+                <pre><code># 프로젝트 폴더 이동
+cd ~/projects/salon-crm
+
+# Docker 컨테이너 상태 확인
+sail ps
+
+# 서버 시작 (안 떠있으면)
+sail up -d
+
+# 브라우저에서 확인
+http://localhost</code></pre>
+            </div>
+        </section>
+
+        <!-- Filament 설치 -->
+        <section id="filament-install">
+            <h2>Filament 설치</h2>
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">복사</button>
+                <pre><code># 패키지 설치
+sail composer require filament/filament
+
+# 초기 설정
+sail artisan filament:install --panels
+
+# 관리자 계정 생성
+sail artisan make:filament-user
+
+# 접속
+http://localhost/admin</code></pre>
+            </div>
+        </section>
+
+        <!-- 체크포인트 -->
+        <section id="checkpoint">
+            <h2>체크포인트</h2>
+            <ul class="checklist">
+                <li>Docker 개념 이해</li>
+                <li>Sail 명령어 숙지</li>
+                <li>Laravel MVC 구조 이해</li>
+                <li>Filament 역할 이해</li>
+                <li>sail up -d 성공</li>
+                <li>http://localhost/admin 접속 성공</li>
+            </ul>
+            <div class="highlight" style="margin-top: 1em;">
+                <p><strong>전부 체크되면 PART 2로!</strong></p>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // 복사 버튼 기능
+        function copyCode(button) {
+            const codeBlock = button.parentElement.querySelector('code');
+            const text = codeBlock.innerText;
+
+            navigator.clipboard.writeText(text).then(() => {
+                button.textContent = '복사됨!';
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.textContent = '복사';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        // 아코디언 네비게이션
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('section[id]');
+            const navSections = document.querySelectorAll('.nav-section');
+            const navLinks = document.querySelectorAll('nav a');
+
+            // 섹션 타이틀 클릭 시 아코디언 토글
+            navSections.forEach(navSection => {
+                const title = navSection.querySelector('.section-title');
+                title.addEventListener('click', function(e) {
+                    navSections.forEach(ns => {
+                        if (ns !== navSection) ns.classList.remove('open');
+                    });
+                    navSection.classList.toggle('open');
+                });
+            });
+
+            // 스크롤 시 활성화 및 아코디언 자동 열기
+            function activateLink() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (scrollY >= sectionTop - 100) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === '#' + current) {
+                        link.classList.add('active');
+
+                        const parentSection = link.closest('.nav-section');
+                        if (parentSection) {
+                            navSections.forEach(ns => ns.classList.remove('open'));
+                            parentSection.classList.add('open');
+                        }
+                    }
+                });
+            }
+
+            window.addEventListener('scroll', activateLink);
+            activateLink();
+
+            if (navSections.length > 0) {
+                navSections[0].classList.add('open');
+            }
+        });
+    </script>
+</body>
+</html>

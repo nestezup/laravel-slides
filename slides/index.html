@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>엑셀 지옥 탈출! - 4시간 만에 만드는 나만의 웹 시스템</title>
+    <link rel="stylesheet" href="common.css">
+    <style>
+        :root {
+            --accent-color: #3498db;
+            --accent-text-color: #ffffff;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        .index-container {
+            text-align: center;
+            padding: 3em;
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        .brand {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-bottom: 0.5em;
+            letter-spacing: 0.2em;
+        }
+
+        .main-title {
+            font-size: 2.8em;
+            color: #ffffff;
+            margin-bottom: 0.2em;
+            font-weight: 800;
+        }
+
+        .main-title .highlight {
+            color: #f39c12;
+        }
+
+        .subtitle {
+            font-size: 1.4em;
+            color: #a0a0a0;
+            margin-bottom: 3em;
+        }
+
+        .version-section {
+            margin-bottom: 3em;
+        }
+
+        .version-title {
+            font-size: 1.2em;
+            color: #95a5a6;
+            margin-bottom: 1em;
+        }
+
+        .version-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2em;
+            margin-bottom: 2em;
+        }
+
+        .version-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2em;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .version-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .version-card.basic {
+            border-color: rgba(46, 204, 113, 0.5);
+        }
+
+        .version-card.basic:hover {
+            border-color: #2ecc71;
+        }
+
+        .version-card.advanced {
+            border-color: rgba(155, 89, 182, 0.5);
+        }
+
+        .version-card.advanced:hover {
+            border-color: #9b59b6;
+        }
+
+        .version-card-badge {
+            display: inline-block;
+            padding: 0.3em 0.8em;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-bottom: 1em;
+        }
+
+        .version-card.basic .version-card-badge {
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+        }
+
+        .version-card.advanced .version-card-badge {
+            background: rgba(155, 89, 182, 0.2);
+            color: #9b59b6;
+        }
+
+        .version-card-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.5em;
+        }
+
+        .version-card-desc {
+            font-size: 1em;
+            color: #a0a0a0;
+            margin-bottom: 1em;
+            line-height: 1.6;
+        }
+
+        .version-card-specs {
+            text-align: left;
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+
+        .version-card-specs li {
+            padding: 0.3em 0;
+        }
+
+        .parts-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1em;
+            margin-top: 1.5em;
+        }
+
+        .part-mini {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 1em;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            color: #a0a0a0;
+            font-size: 0.9em;
+        }
+
+        .part-mini:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+        }
+
+        .part-mini .part-num {
+            font-weight: 700;
+            display: block;
+            margin-bottom: 0.3em;
+        }
+
+        .basic .part-mini .part-num {
+            color: #2ecc71;
+        }
+
+        .advanced .part-mini .part-num {
+            color: #9b59b6;
+        }
+
+        .enter-btn {
+            display: inline-block;
+            padding: 1em 2em;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            margin-top: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .version-card.basic .enter-btn {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .version-card.basic .enter-btn:hover {
+            background: #27ae60;
+        }
+
+        .version-card.advanced .enter-btn {
+            background: #9b59b6;
+            color: white;
+        }
+
+        .version-card.advanced .enter-btn:hover {
+            background: #8e44ad;
+        }
+
+        @media (max-width: 800px) {
+            .version-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .parts-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .main-title {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="index-container">
+        <p class="brand">CODE SERENDIPITY</p>
+        <h1 class="main-title"><span class="highlight">엑셀 지옥</span> 탈출!</h1>
+        <p class="subtitle">4시간 만에 만드는 나만의 웹 시스템</p>
+
+        <div class="version-cards">
+            <!-- Basic 버전 -->
+            <div class="version-card basic">
+                <span class="version-card-badge">BASIC</span>
+                <h2 class="version-card-title">강의용 (권장)</h2>
+                <p class="version-card-desc">
+                    핵심 개념에 집중하는 쉬운 버전<br>
+                    테이블 2개, 관계 1개
+                </p>
+                <ul class="version-card-specs">
+                    <li>고객 테이블 → 시술내역 테이블</li>
+                    <li>customer_id FK 1개</li>
+                    <li>처음 배우는 분들에게 추천</li>
+                </ul>
+                <div class="parts-grid">
+                    <a href="basic/part1.html" class="part-mini">
+                        <span class="part-num">PART 1</span>
+                        시작하기
+                    </a>
+                    <a href="basic/part2.html" class="part-mini">
+                        <span class="part-num">PART 2</span>
+                        고객
+                    </a>
+                    <a href="basic/part3.html" class="part-mini">
+                        <span class="part-num">PART 3</span>
+                        시술내역
+                    </a>
+                    <a href="basic/part4.html" class="part-mini">
+                        <span class="part-num">PART 4</span>
+                        대시보드
+                    </a>
+                </div>
+                <a href="basic/part1.html" class="enter-btn">BASIC으로 시작</a>
+            </div>
+
+
+        </div>
+    </div>
+</body>
+
+</html>

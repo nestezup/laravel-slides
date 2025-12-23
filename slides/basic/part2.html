@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PART 2: 고객 테이블</title>
+    <link rel="stylesheet" href="common.css">
+    <style>
+        /* Part 2 테마 색상 */
+        :root {
+            --accent-color: #e74c3c;
+            --accent-text-color: white;
+            --section-title-color: #f39c12;
+            --section-title-hover-bg: rgba(243, 156, 18, 0.2);
+        }
+
+        .table-design {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1em 0;
+        }
+
+        .table-design th,
+        .table-design td {
+            border: 2px solid #e74c3c;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .table-design th {
+            background: #e74c3c;
+            color: white;
+            font-weight: 600;
+        }
+
+        .table-design tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1em 0;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .comparison-table th {
+            background: #e74c3c;
+            color: white;
+            font-weight: 600;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .schema-card {
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            overflow: hidden;
+            max-width: 350px;
+            margin: 0 auto;
+        }
+
+        .schema-card-header {
+            background: #3498db;
+            color: white;
+            padding: 0.8em 1em;
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+        }
+
+        .schema-card-body {
+            background: white;
+        }
+
+        .schema-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.6em 1em;
+            border-bottom: 1px solid #eee;
+        }
+
+        .schema-row:last-child {
+            border-bottom: none;
+        }
+
+        .schema-row.pk {
+            background: #f8f9fa;
+        }
+
+        .schema-row .col-name {
+            font-family: 'Courier New', monospace;
+        }
+
+        .schema-row .col-desc {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        .badge-pk {
+            background: #ffeaa7;
+            color: #2c3e50;
+            padding: 0.1em 0.4em;
+            border-radius: 3px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-right: 0.5em;
+        }
+
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            flex-wrap: wrap;
+            padding: 1em 0;
+        }
+
+        .flow-box {
+            background: white;
+            border: 2px solid #e74c3c;
+            border-radius: 8px;
+            padding: 1em 1.5em;
+            text-align: center;
+            min-width: 100px;
+        }
+
+        .flow-box .label {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .flow-box .sub-label {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-top: 0.3em;
+        }
+
+        .flow-arrow {
+            font-size: 1.5em;
+            color: #e74c3c;
+            padding: 0 0.5em;
+        }
+
+        .step-number {
+            display: inline-block;
+            min-width: 32px;
+            width: 32px;
+            height: 32px;
+            background: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 32px;
+            font-weight: 700;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+
+        .steps-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .steps-list li {
+            margin-bottom: 1.5em;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .steps-list .step-content {
+            flex: 1;
+        }
+
+        .checklist {
+            list-style: none;
+            margin-left: 0;
+        }
+
+        .checklist li {
+            padding: 0.5em 0;
+            padding-left: 2em;
+            position: relative;
+        }
+
+        .checklist li::before {
+            content: "☐";
+            position: absolute;
+            left: 0;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <!-- 네비게이션 -->
+    <nav>
+        <h1>PART 2: 고객 테이블</h1>
+        <ul class="nav-accordion">
+            <li class="nav-section">
+                <a href="#intro" class="section-title">시작하기</a>
+                <ul class="subsections">
+                    <li><a href="#goal">오늘의 목표</a></li>
+                </ul>
+            </li>
+            <li class="nav-section">
+                <a href="#db-concept" class="section-title">DB 개념</a>
+                <ul class="subsections">
+                    <li><a href="#excel-vs-db">엑셀 vs 데이터베이스</a></li>
+                    <li><a href="#column-record">컬럼 vs 레코드</a></li>
+                    <li><a href="#primary-key">Primary Key</a></li>
+                </ul>
+            </li>
+            <li class="nav-section">
+                <a href="#migration" class="section-title">Migration</a>
+                <ul class="subsections">
+                    <li><a href="#migration-what">Migration이란</a></li>
+                    <li><a href="#migration-create">Migration 생성</a></li>
+                    <li><a href="#migration-code">코드 작성</a></li>
+                </ul>
+            </li>
+            <li class="nav-section">
+                <a href="#model" class="section-title">Model</a>
+                <ul class="subsections">
+                    <li><a href="#model-what">Model이란</a></li>
+                    <li><a href="#model-create">Model 생성</a></li>
+                </ul>
+            </li>
+            <li class="nav-section">
+                <a href="#resource" class="section-title">Filament Resource</a>
+                <ul class="subsections">
+                    <li><a href="#resource-create">Resource 생성</a></li>
+                    <li><a href="#resource-check">브라우저 확인</a></li>
+                </ul>
+            </li>
+            <li class="nav-section">
+                <a href="#practice" class="section-title">실습</a>
+                <ul class="subsections">
+                    <li><a href="#practice-input">고객 입력</a></li>
+                    <li><a href="#practice-crud">CRUD 테스트</a></li>
+                </ul>
+            </li>
+            <li class="nav-section">
+                <a href="#checkpoint" class="section-title">체크포인트</a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- 메인 콘텐츠 -->
+    <main>
+        <!-- 타이틀 -->
+        <section class="title-section" id="intro">
+            <h1>PART 2</h1>
+            <h2>첫 번째 테이블 - 고객</h2>
+            <p><span class="text-highlight">엑셀 시트를 데이터베이스로 옮기기</span></p>
+            <p style="margin-top: 2em; color: #95a5a6;">60분</p>
+        </section>
+
+        <!-- 오늘의 목표 -->
+        <section id="goal">
+            <h2>오늘의 목표</h2>
+            <div class="highlight">
+                <p><strong>고객 테이블 하나 만들기</strong></p>
+                <p>Migration → Model → Filament Resource</p>
+            </div>
+
+            <div class="schema-card" style="margin-top: 2em;">
+                <div class="schema-card-header">customers</div>
+                <div class="schema-card-body">
+                    <div class="schema-row pk">
+                        <span class="badge-pk">PK</span>
+                        <span class="col-name">id</span>
+                    </div>
+                    <div class="schema-row">
+                        <span class="col-name">name</span>
+                        <span class="col-desc">이름</span>
+                    </div>
+                    <div class="schema-row">
+                        <span class="col-name">phone</span>
+                        <span class="col-desc">연락처</span>
+                    </div>
+                    <div class="schema-row">
+                        <span class="col-name">birth_date</span>
+                        <span class="col-desc">생년월일</span>
+                    </div>
+                    <div class="schema-row">
+                        <span class="col-name">gender</span>
+                        <span class="col-desc">성별</span>
+                    </div>
+                    <div class="schema-row">
+                        <span class="col-name">memo</span>
+                        <span class="col-desc">메모</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DB 개념 -->
+        <section id="db-concept" class="section-divider">
+            <h2>데이터베이스 기초 개념</h2>
+            <p>엑셀과 비교하면서 이해하기</p>
+        </section>
+
+        <!-- 엑셀 vs 데이터베이스 -->
+        <section id="excel-vs-db">
+            <h2>엑셀 시트 vs 데이터베이스 테이블</h2>
+
+            <div class="two-column">
+                <div style="background: #fff5f5; padding: 1.5em; border-radius: 8px; border: 2px solid #e74c3c;">
+                    <h3 style="color: #e74c3c; margin-top: 0;">엑셀 시트</h3>
+                    <ul>
+                        <li><strong>행(Row)</strong> = 한 명의 데이터</li>
+                        <li><strong>열(Column)</strong> = 이름, 연락처...</li>
+                        <li>아무 셀에 아무 값 입력 가능</li>
+                        <li style="color: #e74c3c;">→ 나중에 집계할 때 문제!</li>
+                    </ul>
+                </div>
+                <div style="background: #f0fff4; padding: 1.5em; border-radius: 8px; border: 2px solid #28a745;">
+                    <h3 style="color: #28a745; margin-top: 0;">데이터베이스 테이블</h3>
+                    <ul>
+                        <li><strong>Record</strong> = 한 명의 데이터</li>
+                        <li><strong>Column</strong> = 이름, 연락처...</li>
+                        <li>컬럼마다 타입 지정 (문자, 숫자, 날짜)</li>
+                        <li style="color: #28a745;">→ 데이터 무결성 보장!</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="tip" style="margin-top: 1.5em;">
+                <p><strong>핵심 차이:</strong> 데이터베이스는 타입이 안 맞으면 에러! 잘못된 데이터가 들어갈 수 없음.</p>
+            </div>
+        </section>
+
+        <!-- 컬럼 vs 레코드 -->
+        <section id="column-record">
+            <h2>컬럼 vs 레코드</h2>
+
+            <div class="diagram-container" style="background: #f8f9fa; padding: 2em; border-radius: 8px; margin: 1em 0;">
+                <table style="max-width: 600px; margin: 0 auto; border-collapse: collapse;">
+                    <thead>
+                        <tr>
+                            <th style="background: #3498db; color: white; border: 2px solid #3498db; padding: 12px;">이름<br><small style="font-weight: 400;">컬럼1</small></th>
+                            <th style="background: #3498db; color: white; border: 2px solid #3498db; padding: 12px;">전화번호<br><small style="font-weight: 400;">컬럼2</small></th>
+                            <th style="background: #3498db; color: white; border: 2px solid #3498db; padding: 12px;">생년월일<br><small style="font-weight: 400;">컬럼3</small></th>
+                            <th style="background: transparent; border: none;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="background: #fdf2e8;">
+                            <td style="border: 1px solid #ddd; padding: 12px;">김서연</td>
+                            <td style="border: 1px solid #ddd; padding: 12px;">010-1234</td>
+                            <td style="border: 1px solid #ddd; padding: 12px;">1990-03</td>
+                            <td style="border: none; color: #e67e22; font-weight: 600; padding-left: 1em;">← 레코드 1</td>
+                        </tr>
+                        <tr style="background: #fef9e7;">
+                            <td style="border: 1px solid #ddd; padding: 12px;">이준호</td>
+                            <td style="border: 1px solid #ddd; padding: 12px;">010-2345</td>
+                            <td style="border: 1px solid #ddd; padding: 12px;">1985-07</td>
+                            <td style="border: none; color: #e67e22; font-weight: 600; padding-left: 1em;">← 레코드 2</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <ul>
+                <li><strong>컬럼 (Column)</strong> = 세로, 어떤 정보를 저장할지 정의</li>
+                <li><strong>레코드 (Record)</strong> = 가로, 실제 데이터 한 건</li>
+            </ul>
+        </section>
+
+        <!-- Primary Key -->
+        <section id="primary-key">
+            <h2>Primary Key란?</h2>
+
+            <div class="highlight">
+                <p><strong>id 컬럼 = Primary Key (기본키)</strong></p>
+                <p>각 레코드의 고유 식별자. 중복 불가. 자동 증가.</p>
+            </div>
+
+            <div class="diagram-container" style="background: #f8f9fa; padding: 2em; border-radius: 8px; margin: 1em 0;">
+                <table class="table-design" style="max-width: 500px; margin: 0 auto;">
+                    <thead>
+                        <tr>
+                            <th>id</th>
+                            <th>name</th>
+                            <th>phone</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>1</strong></td>
+                            <td>김서연</td>
+                            <td>010-1234-5678</td>
+                        </tr>
+                        <tr>
+                            <td><strong>2</strong></td>
+                            <td>이준호</td>
+                            <td>010-2345-6789</td>
+                        </tr>
+                        <tr>
+                            <td><strong>3</strong></td>
+                            <td>박민서</td>
+                            <td>010-3456-7890</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="tip">
+                <p>엑셀에서 수동으로 매기던 고객번호를 <strong>자동화!</strong></p>
+            </div>
+        </section>
+
+        <!-- Migration -->
+        <section id="migration" class="section-divider">
+            <h2>Migration</h2>
+            <p>테이블 설계도 만들기</p>
+        </section>
+
+        <!-- Migration이란 -->
+        <section id="migration-what">
+            <h2>Migration이란?</h2>
+
+            <div class="highlight">
+                <p><strong>Migration = 테이블 설계도</strong></p>
+                <p>PHP 코드로 테이블 구조를 정의</p>
+            </div>
+
+            <div class="diagram-container" style="background: #f8f9fa; padding: 2em; border-radius: 8px; margin: 1em 0;">
+                <div class="flow-diagram">
+                    <div class="flow-box">
+                        <div class="label">Migration</div>
+                        <div class="sub-label">(설계도)</div>
+                    </div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-box" style="background: #f0fff4; border-color: #28a745;">
+                        <div class="label">Table</div>
+                        <div class="sub-label">(실제 테이블)</div>
+                    </div>
+                </div>
+            </div>
+
+            <ul>
+                <li>SQL을 직접 작성하지 않음</li>
+                <li>버전 관리 가능 (Git)</li>
+                <li>팀원과 DB 구조 공유 용이</li>
+            </ul>
+        </section>
+
+        <!-- Migration 생성 -->
+        <section id="migration-create">
+            <h2>Migration 파일 생성</h2>
+
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">복사</button>
+                <pre><code>sail artisan make:migration create_customers_table</code></pre>
+            </div>
+
+            <p>생성된 파일 위치:</p>
+            <div class="code-block">
+                <pre><code>database/migrations/2024_xx_xx_xxxxxx_create_customers_table.php</code></pre>
+            </div>
+        </section>
+
+        <!-- Migration 코드 -->
+        <section id="migration-code">
+            <h2>Migration 코드 작성</h2>
+
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">복사</button>
+                <pre><code>public function up(): void
+{
+    Schema::create('customers', function (Blueprint $table) {
+        $table->id();                              // Primary Key
+        $table->string('name');                    // 이름
+        $table->string('phone')->nullable();       // 연락처
+        $table->date('birth_date')->nullable();    // 생년월일
+        $table->enum('gender', ['남', '여'])->nullable();  // 성별
+        $table->date('registered_at');             // 등록일
+        $table->text('memo')->nullable();          // 메모
+        $table->timestamps();                      // created_at, updated_at
+    });
+}</code></pre>
+            </div>
+
+            <h3>데이터 타입</h3>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>메서드</th>
+                        <th>타입</th>
+                        <th>설명</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>$table->id()</code></td>
+                        <td>BIGINT</td>
+                        <td>Primary Key, Auto Increment</td>
+                    </tr>
+                    <tr>
+                        <td><code>$table->string()</code></td>
+                        <td>VARCHAR(255)</td>
+                        <td>짧은 문자열</td>
+                    </tr>
+                    <tr>
+                        <td><code>$table->text()</code></td>
+                        <td>TEXT</td>
+                        <td>긴 문자열</td>
+                    </tr>
+                    <tr>
+                        <td><code>$table->date()</code></td>
+                        <td>DATE</td>
+                        <td>날짜 (YYYY-MM-DD)</td>
+                    </tr>
+                    <tr>
+                        <td><code>$table->enum()</code></td>
+                        <td>ENUM</td>
+                        <td>지정된 값 중 선택</td>
+                    </tr>
+                    <tr>
+                        <td><code>$table->timestamps()</code></td>
+                        <td>TIMESTAMP</td>
+                        <td>생성/수정 시간 자동</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="practice-note">
+                <p><code>->nullable()</code> = NULL 허용 (입력 안 해도 됨)</p>
+            </div>
+
+            <h3>Migration 실행</h3>
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">복사</button>
+                <pre><code>sail artisan migrate</code></pre>
+            </div>
+        </section>
+
+        <!-- Model -->
+        <section id="model" class="section-divider">
+            <h2>Model</h2>
+            <p>테이블과 PHP 코드를 연결</p>
+        </section>
+
+        <!-- Model이란 -->
+        <section id="model-what">
+            <h2>Model이란?</h2>
+
+            <div class="highlight">
+                <p><strong>Model = 테이블과 PHP 코드를 연결하는 클래스</strong></p>
+                <p>Eloquent ORM: SQL 없이 PHP 객체로 데이터를 다룸</p>
+            </div>
+
+            <div class="diagram-container" style="background: #f8f9fa; padding: 2em; border-radius: 8px; margin: 1em 0;">
+                <div class="flow-diagram">
+                    <div class="flow-box">
+                        <div class="label">PHP 코드</div>
+                    </div>
+                    <span class="flow-arrow">↔</span>
+                    <div class="flow-box" style="background: #cce5ff; border-color: #3498db;">
+                        <div class="label">Model</div>
+                        <div class="sub-label">(통역사)</div>
+                    </div>
+                    <span class="flow-arrow">↔</span>
+                    <div class="flow-box" style="background: #f0fff4; border-color: #28a745;">
+                        <div class="label">Database</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">복사</button>
+                <pre><code>// SQL로 하면
+SELECT * FROM customers WHERE id = 1;
+
+// Eloquent로 하면
+Customer::find(1);</code></pre>
+            </div>
+        </section>
+
+        <!-- Model 생성 -->
+        <section id="model-create">
+            <h2>Model 생성 및 작성</h2>
+
+            <h3>1. Model 파일 생성</h3>
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">복사</button>
+                <pre><code>sail artisan make:model Customer</code></pre>
+            </div>
+
+            <h3>2. Model 코드 작성</h3>
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">복사</button>
+                <pre><code>&lt;?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Customer extends Model
+{
+    protected $fillable = [
+        'name',
+        'phone',
+        'birth_date',
+        'gender',
+        'registered_at',
+        'memo',
+    ];
+
+    protected $casts = [
+        'birth_date' => 'date',
+        'registered_at' => 'date',
+    ];
+}</code></pre>
+            </div>
+
+            <div class="practice-note">
+                <p><strong>$fillable</strong> = 입력 가능한 필드 목록</p>
+                <p><strong>$casts</strong> = 자동 타입 변환</p>
+            </div>
+        </section>
+
+        <!-- Filament Resource -->
+        <section id="resource" class="section-divider">
+            <h2>Filament Resource</h2>
+            <p>Admin 화면 자동 생성</p>
+        </section>
+
+        <!-- Resource 생성 -->
+        <section id="resource-create">
+            <h2>Resource 생성</h2>
+
+            <div class="highlight">
+                <p><strong>Resource = Model에 대한 Admin 화면 세트</strong></p>
+                <p>목록, 생성, 수정, 삭제 페이지가 한 번에!</p>
+            </div>
+
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">복사</button>
+                <pre><code>sail artisan make:filament-resource Customer --generate</code></pre>
+            </div>
+
+            <div class="tip">
+                <p><code>--generate</code> 옵션: Model 필드를 읽어서 폼과 테이블 자동 생성!</p>
+            </div>
+        </section>
+
+        <!-- 브라우저 확인 -->
+        <section id="resource-check">
+            <h2>브라우저에서 확인</h2>
+
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">복사</button>
+                <pre><code>http://localhost/admin</code></pre>
+            </div>
+
+            <ul>
+                <li>좌측 메뉴에 "Customers" 추가됨</li>
+                <li>목록 페이지 확인</li>
+                <li>"New Customer" 버튼으로 생성 페이지</li>
+            </ul>
+        </section>
+
+        <!-- 실습 -->
+        <section id="practice" class="section-divider">
+            <h2>실습</h2>
+            <p>직접 해봅시다</p>
+        </section>
+
+        <!-- 고객 입력 -->
+        <section id="practice-input">
+            <h2>실습: 고객 3명 입력</h2>
+
+            <div class="practice-note">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>이름</th>
+                            <th>연락처</th>
+                            <th>생년월일</th>
+                            <th>성별</th>
+                            <th>메모</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>김서연</td>
+                            <td>010-1234-5678</td>
+                            <td>1990-03-15</td>
+                            <td>여</td>
+                            <td>펌 알러지</td>
+                        </tr>
+                        <tr>
+                            <td>이준호</td>
+                            <td>010-2345-6789</td>
+                            <td>1985-07-22</td>
+                            <td>남</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>박민서</td>
+                            <td>010-3456-7890</td>
+                            <td>1992-11-03</td>
+                            <td>여</td>
+                            <td>염색 선호</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="tip">
+                <p>New Customer 버튼 클릭 → 정보 입력 → Save</p>
+            </div>
+        </section>
+
+        <!-- CRUD 테스트 -->
+        <section id="practice-crud">
+            <h2>실습: CRUD 테스트</h2>
+
+            <ol class="steps-list">
+                <li>
+                    <span class="step-number">1</span>
+                    <div class="step-content">
+                        <strong>수정 (Update)</strong><br>
+                        목록에서 김서연 클릭 → Edit → 메모 수정 → Save
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">2</span>
+                    <div class="step-content">
+                        <strong>검색</strong><br>
+                        검색창에 "김" 입력 → 결과 확인
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">3</span>
+                    <div class="step-content">
+                        <strong>필터</strong><br>
+                        필터 버튼 → 성별 "여"로 필터링
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">4</span>
+                    <div class="step-content">
+                        <strong>삭제 (Delete)</strong><br>
+                        테스트용 데이터 추가 → 삭제 버튼 → 확인
+                    </div>
+                </li>
+            </ol>
+        </section>
+
+        <!-- 체크포인트 -->
+        <section id="checkpoint">
+            <h2>PART 2 체크포인트</h2>
+
+            <ul class="checklist">
+                <li>Migration 파일 생성</li>
+                <li>컬럼 정의 코드 작성</li>
+                <li>sail artisan migrate 실행</li>
+                <li>Model 파일 생성</li>
+                <li>fillable, casts 설정</li>
+                <li>Filament Resource 생성</li>
+                <li>고객 3명 입력 완료</li>
+                <li>수정, 검색, 삭제 테스트</li>
+            </ul>
+
+            <div class="highlight" style="margin-top: 1.5em; text-align: center;">
+                <p style="font-size: 1.3em;"><strong>전부 체크되면 휴식 시간!</strong></p>
+                <p style="margin-top: 0.5em;">PART 3에서는 시술내역을 만들고 고객과 연결합니다</p>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        function copyCode(button) {
+            const codeBlock = button.parentElement.querySelector('code');
+            const text = codeBlock.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                button.textContent = '복사됨!';
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.textContent = '복사';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('section[id]');
+            const navSections = document.querySelectorAll('.nav-section');
+            const navLinks = document.querySelectorAll('nav a');
+
+            navSections.forEach(navSection => {
+                const title = navSection.querySelector('.section-title');
+                title.addEventListener('click', function(e) {
+                    navSections.forEach(ns => {
+                        if (ns !== navSection) ns.classList.remove('open');
+                    });
+                    navSection.classList.toggle('open');
+                });
+            });
+
+            function activateLink() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (scrollY >= sectionTop - 100) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === '#' + current) {
+                        link.classList.add('active');
+                        const parentSection = link.closest('.nav-section');
+                        if (parentSection) {
+                            navSections.forEach(ns => ns.classList.remove('open'));
+                            parentSection.classList.add('open');
+                        }
+                    }
+                });
+            }
+
+            window.addEventListener('scroll', activateLink);
+            activateLink();
+            if (navSections.length > 0) {
+                navSections[0].classList.add('open');
+            }
+        });
+    </script>
+</body>
+</html>

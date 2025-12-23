@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PART 3: 시술내역 테이블</title>
+    <link rel="stylesheet" href="common.css">
+    <style>
+        /* Part 3 테마 색상 */
+        :root {
+            --accent-color: #27ae60;
+            --accent-text-color: white;
+            --section-title-color: #2ecc71;
+            --section-title-hover-bg: rgba(46, 204, 113, 0.2);
+        }
+
+        .table-design {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1em 0;
+        }
+
+        .table-design th,
+        .table-design td {
+            border: 2px solid #27ae60;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .table-design th {
+            background: #27ae60;
+            color: white;
+            font-weight: 600;
+        }
+
+        .table-design tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1em 0;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .comparison-table th {
+            background: #27ae60;
+            color: white;
+            font-weight: 600;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        /* 관계 다이어그램 */
+        .relation-diagram {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1em;
+            margin: 2em 0;
+        }
+
+        .relation-row {
+            display: flex;
+            align-items: center;
+            gap: 2em;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .relation-box {
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            min-width: 150px;
+            text-align: center;
+            background: white;
+        }
+
+        .relation-box.main {
+            border-color: #27ae60;
+            border-width: 3px;
+        }
+
+        .relation-box-header {
+            background: #3498db;
+            color: white;
+            padding: 0.5em 1em;
+            font-weight: 600;
+        }
+
+        .relation-box.main .relation-box-header {
+            background: #27ae60;
+        }
+
+        .relation-box-body {
+            padding: 0.8em;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .relation-arrow {
+            font-size: 2em;
+            color: #27ae60;
+        }
+
+        .schema-card {
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            overflow: hidden;
+            min-width: 200px;
+        }
+
+        .schema-card.green {
+            border-color: #27ae60;
+        }
+
+        .schema-card-header {
+            background: #3498db;
+            color: white;
+            padding: 0.8em 1em;
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+        }
+
+        .schema-card.green .schema-card-header {
+            background: #27ae60;
+        }
+
+        .schema-card-body {
+            background: white;
+        }
+
+        .schema-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.6em 1em;
+            border-bottom: 1px solid #eee;
+        }
+
+        .schema-row:last-child {
+            border-bottom: none;
+        }
+
+        .schema-row.pk {
+            background: #fef9e7;
+        }
+
+        .schema-row.fk {
+            background: #e8f8f5;
+        }
+
+        .badge-pk {
+            background: #ffeaa7;
+            color: #2c3e50;
+            padding: 0.1em 0.4em;
+            border-radius: 3px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-right: 0.5em;
+        }
+
+        .badge-fk {
+            background: #81ecec;
+            color: #2c3e50;
+            padding: 0.1em 0.4em;
+            border-radius: 3px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-right: 0.5em;
+        }
+
+        .compare-box {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 1.5em;
+            margin: 1em 0;
+        }
+
+        .compare-box.before {
+            border-color: #e74c3c;
+            background: #fdf2f2;
+        }
+
+        .compare-box.after {
+            border-color: #27ae60;
+            background: #f0fff4;
+        }
+
+        .compare-box h4 {
+            margin-top: 0;
+        }
+
+        .compare-box.before h4 {
+            color: #e74c3c;
+        }
+
+        .compare-box.after h4 {
+            color: #27ae60;
+        }
+
+        .step-number {
+            display: inline-block;
+            min-width: 32px;
+            width: 32px;
+            height: 32px;
+            background: #27ae60;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 32px;
+            font-weight: 700;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+
+        .steps-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .steps-list li {
+            margin-bottom: 1.5em;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .steps-list .step-content {
+            flex: 1;
+        }
+
+        .checklist {
+            list-style: none;
+            margin-left: 0;
+        }
+
+        .checklist li {
+            padding: 0.5em 0;
+            padding-left: 2em;
+            position: relative;
+        }
+
+        .checklist li::before {
+            content: "☐";
+            position: absolute;
+            left: 0;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <!-- 네비게이션 -->
+    <nav>
+        <h1>PART 3: 시술내역</h1>
+        <ul class="nav-accordion">
+            <li class="nav-section">
+                <a href="#intro" class="section-title">시작하기</a>
+                <ul class="subsections">
+                    <li><a href="#goal">오늘의 목표</a></li>
+                </ul>
+            </li>
+            <li class="nav-section">
+                <a href="#relationship" class="section-title">관계 개념</a>
+                <ul class="subsections">
+                    <li><a href="#vlookup">VLOOKUP의 고통</a></li>
+                    <li><a href="#fk">Foreign Key</a></li>
+                    <li><a href="#one-to-many">1:N 관계</a></li>
+                </ul>
+            </li>
+            <li class="nav-section">
+                <a href="#migration" class="section-title">Migration</a>
+                <ul class="subsections">
+                    <li><a href="#migration-create">Migration 생성</a></li>
+                    <li><a href="#migration-code">FK 코드 작성</a></li>
+                </ul>
+            </li>
+            <li class="nav-section">
+                <a href="#model" class="section-title">Model</a>
+                <ul class="subsections">
+                    <li><a href="#model-treatment">Treatment Model</a></li>
+                    <li><a href="#model-customer">Customer에 관계 추가</a></li>
+                </ul>
+            </li>
+            <li class="nav-section">
+                <a href="#resource" class="section-title">Filament Resource</a>
+                <ul class="subsections">
+                    <li><a href="#resource-create">Resource 생성</a></li>
+                    <li><a href="#resource-dropdown">드롭다운 확인</a></li>
+                </ul>
+            </li>
+            <li class="nav-section">
+                <a href="#practice" class="section-title">실습</a>
+                <ul class="subsections">
+                    <li><a href="#practice-input">시술내역 입력</a></li>
+                    <li><a href="#practice-check">관계 확인</a></li>
+                </ul>
+            </li>
+            <li class="nav-section">
+                <a href="#checkpoint" class="section-title">체크포인트</a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- 메인 콘텐츠 -->
+    <main>
+        <!-- 타이틀 -->
+        <section class="title-section" id="intro">
+            <h1>PART 3</h1>
+            <h2>시술내역 테이블</h2>
+            <p><span class="text-highlight">VLOOKUP 없이 테이블 연결하기</span></p>
+            <p style="margin-top: 2em; color: #95a5a6;">50분</p>
+        </section>
+
+        <!-- 오늘의 목표 -->
+        <section id="goal">
+            <h2>오늘의 목표</h2>
+            <div class="highlight">
+                <p><strong>고객과 시술내역 연결하기</strong></p>
+                <p>Foreign Key로 테이블 간 관계 설정</p>
+            </div>
+
+            <div class="relation-diagram">
+                <div class="relation-row">
+                    <div class="schema-card">
+                        <div class="schema-card-header">customers</div>
+                        <div class="schema-card-body">
+                            <div class="schema-row pk">
+                                <span class="badge-pk">PK</span> id = <strong>1</strong>
+                            </div>
+                            <div class="schema-row">name = 김서연</div>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center;">
+                        <div class="relation-arrow">←</div>
+                        <div style="font-size: 0.9em; color: #7f8c8d;">참조</div>
+                    </div>
+
+                    <div class="schema-card green">
+                        <div class="schema-card-header">treatments</div>
+                        <div class="schema-card-body">
+                            <div class="schema-row pk">
+                                <span class="badge-pk">PK</span> id
+                            </div>
+                            <div class="schema-row fk">
+                                <span class="badge-fk">FK</span> customer_id = <strong>1</strong>
+                            </div>
+                            <div class="schema-row">treatment_type</div>
+                            <div class="schema-row">price</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 관계 개념 -->
+        <section id="relationship" class="section-divider">
+            <h2>관계(Relationship) 개념</h2>
+            <p>테이블을 연결하는 방법</p>
+        </section>
+
+        <!-- VLOOKUP의 고통 -->
+        <section id="vlookup">
+            <h2>엑셀에서의 고통: VLOOKUP</h2>
+
+            <div class="two-column">
+                <div class="compare-box before">
+                    <h4>엑셀 방식</h4>
+                    <pre style="font-size: 0.85em; background: #fff; padding: 1em; border-radius: 4px; overflow-x: auto;">=VLOOKUP(A2, 고객명단!A:D, 2, FALSE)</pre>
+                    <ul style="margin-top: 1em; font-size: 0.9em;">
+                        <li>수식이 복잡함</li>
+                        <li>이름이 바뀌면 깨짐</li>
+                        <li>동명이인 구분 불가</li>
+                        <li>파일 커지면 느려짐</li>
+                    </ul>
+                </div>
+                <div class="compare-box after">
+                    <h4>데이터베이스 방식</h4>
+                    <pre style="font-size: 0.85em; background: #fff; padding: 1em; border-radius: 4px;">$treatment->customer->name</pre>
+                    <ul style="margin-top: 1em; font-size: 0.9em;">
+                        <li>직관적인 코드</li>
+                        <li>ID로 연결 (이름 변경 무관)</li>
+                        <li>고유 ID로 구분</li>
+                        <li>속도 빠름</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Foreign Key -->
+        <section id="fk">
+            <h2>Foreign Key (외래키)</h2>
+
+            <div class="highlight">
+                <p><strong>Foreign Key = 다른 테이블의 Primary Key를 참조하는 컬럼</strong></p>
+            </div>
+
+            <div class="diagram-container" style="background: #f8f9fa; padding: 2em; border-radius: 8px; margin: 1.5em 0;">
+                <table class="table-design" style="max-width: 500px; margin: 0 auto;">
+                    <thead>
+                        <tr>
+                            <th>id</th>
+                            <th>customer_id</th>
+                            <th>treatment_type</th>
+                            <th>price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td style="background: #e8f8f5;"><strong>1</strong> → 김서연</td>
+                            <td>커트</td>
+                            <td>35,000</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td style="background: #e8f8f5;"><strong>2</strong> → 이준호</td>
+                            <td>남성커트</td>
+                            <td>20,000</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td style="background: #e8f8f5;"><strong>1</strong> → 김서연</td>
+                            <td>염색</td>
+                            <td>80,000</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="tip">
+                <p><strong>FK 컬럼 이름 규칙:</strong> 참조할_테이블명(단수)_id</p>
+                <p>예: customer_id (customers 테이블 참조)</p>
+            </div>
+        </section>
+
+        <!-- 1:N 관계 -->
+        <section id="one-to-many">
+            <h2>1:N (One to Many) 관계</h2>
+
+            <div class="highlight">
+                <p>고객 <strong>한 명</strong>이 시술 <strong>여러 건</strong>을 받을 수 있다</p>
+            </div>
+
+            <div class="two-column" style="margin-top: 1.5em;">
+                <div style="background: #f8f9fa; padding: 1.5em; border-radius: 8px; text-align: center;">
+                    <h4 style="margin-top: 0;">Customer (1)</h4>
+                    <code>hasMany(Treatment::class)</code>
+                    <p style="margin-top: 0.5em; color: #666;">"나는 여러 시술내역을 <strong>가진다</strong>"</p>
+                </div>
+                <div style="background: #e8f8f5; padding: 1.5em; border-radius: 8px; text-align: center;">
+                    <h4 style="margin-top: 0;">Treatment (N)</h4>
+                    <code>belongsTo(Customer::class)</code>
+                    <p style="margin-top: 0.5em; color: #666;">"나는 한 고객에게 <strong>속한다</strong>"</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Migration -->
+        <section id="migration" class="section-divider">
+            <h2>Migration</h2>
+            <p>FK가 포함된 테이블 만들기</p>
+        </section>
+
+        <!-- Migration 생성 -->
+        <section id="migration-create">
+            <h2>Migration 생성</h2>
+
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">복사</button>
+                <pre><code>sail artisan make:migration create_treatments_table</code></pre>
+            </div>
+        </section>
+
+        <!-- Migration 코드 -->
+        <section id="migration-code">
+            <h2>Migration 코드 (FK 포함)</h2>
+
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">복사</button>
+                <pre><code>public function up(): void
+{
+    Schema::create('treatments', function (Blueprint $table) {
+        $table->id();
+
+        // Foreign Key - 고객 테이블 참조
+        $table->foreignId('customer_id')
+              ->constrained()
+              ->onDelete('cascade');
+
+        $table->date('treatment_date');
+        $table->string('treatment_type');
+        $table->integer('price');
+        $table->enum('payment_method', ['카드', '현금', '계좌이체'])->default('카드');
+        $table->text('memo')->nullable();
+        $table->timestamps();
+    });
+}</code></pre>
+            </div>
+
+            <h3>FK 코드 설명</h3>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>코드</th>
+                        <th>설명</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>foreignId('customer_id')</code></td>
+                        <td>customer_id 컬럼 생성</td>
+                    </tr>
+                    <tr>
+                        <td><code>constrained()</code></td>
+                        <td>customers 테이블의 id 참조</td>
+                    </tr>
+                    <tr>
+                        <td><code>onDelete('cascade')</code></td>
+                        <td>고객 삭제 시 시술내역도 삭제</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Migration 실행</h3>
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">복사</button>
+                <pre><code>sail artisan migrate</code></pre>
+            </div>
+        </section>
+
+        <!-- Model -->
+        <section id="model" class="section-divider">
+            <h2>Model</h2>
+            <p>관계 설정하기</p>
+        </section>
+
+        <!-- Treatment Model -->
+        <section id="model-treatment">
+            <h2>Treatment Model 생성</h2>
+
+            <h3>1. Model 생성</h3>
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">복사</button>
+                <pre><code>sail artisan make:model Treatment</code></pre>
+            </div>
+
+            <h3>2. Model 코드</h3>
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">복사</button>
+                <pre><code>&lt;?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class Treatment extends Model
+{
+    protected $fillable = [
+        'customer_id',
+        'treatment_date',
+        'treatment_type',
+        'price',
+        'payment_method',
+        'memo',
+    ];
+
+    protected $casts = [
+        'treatment_date' => 'date',
+        'price' => 'integer',
+    ];
+
+    // 관계: 이 시술은 한 고객에게 속한다
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(Customer::class);
+    }
+}</code></pre>
+            </div>
+
+            <div class="tip">
+                <p><strong>belongsTo</strong>: "나는 ~에 속한다"</p>
+                <p>시술내역은 고객 <strong>한 명</strong>에게 속함</p>
+            </div>
+        </section>
+
+        <!-- Customer에 관계 추가 -->
+        <section id="model-customer">
+            <h2>Customer Model에 관계 추가</h2>
+
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">복사</button>
+                <pre><code>// app/Models/Customer.php 에 추가
+
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Customer extends Model
+{
+    // 기존 코드 유지...
+
+    // 관계: 이 고객은 여러 시술내역을 가진다
+    public function treatments(): HasMany
+    {
+        return $this->hasMany(Treatment::class);
+    }
+}</code></pre>
+            </div>
+
+            <div class="tip">
+                <p><strong>hasMany</strong>: "나는 여러 개를 가진다"</p>
+                <p>고객은 시술내역 <strong>여러 개</strong>를 가질 수 있음</p>
+            </div>
+
+            <h3>관계 사용법</h3>
+            <div class="code-block">
+                <pre><code>// 고객의 시술내역 조회
+$customer = Customer::find(1);
+$treatments = $customer->treatments;  // 여러 건
+
+// 시술내역에서 고객 정보 접근
+$treatment = Treatment::find(1);
+$customerName = $treatment->customer->name;  // VLOOKUP 필요 없음!</code></pre>
+            </div>
+        </section>
+
+        <!-- Filament Resource -->
+        <section id="resource" class="section-divider">
+            <h2>Filament Resource</h2>
+            <p>드롭다운으로 고객 선택</p>
+        </section>
+
+        <!-- Resource 생성 -->
+        <section id="resource-create">
+            <h2>Resource 생성</h2>
+
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">복사</button>
+                <pre><code>sail artisan make:filament-resource Treatment --generate</code></pre>
+            </div>
+        </section>
+
+        <!-- 드롭다운 확인 -->
+        <section id="resource-dropdown">
+            <h2>드롭다운으로 고객 선택</h2>
+
+            <div class="highlight">
+                <p><strong>Filament이 자동으로:</strong></p>
+                <ul style="text-align: left; display: inline-block;">
+                    <li>customer_id를 <strong>드롭다운(Select)</strong>으로 변환</li>
+                    <li>고객 목록을 선택할 수 있게 해줌</li>
+                    <li>VLOOKUP 없이 연결 완료!</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">복사</button>
+                <pre><code>http://localhost/admin/treatments</code></pre>
+            </div>
+        </section>
+
+        <!-- 실습 -->
+        <section id="practice" class="section-divider">
+            <h2>실습</h2>
+            <p>직접 데이터 입력해보기</p>
+        </section>
+
+        <!-- 시술내역 입력 -->
+        <section id="practice-input">
+            <h2>실습: 시술내역 3건 입력</h2>
+
+            <div class="practice-note">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>고객</th>
+                            <th>날짜</th>
+                            <th>시술</th>
+                            <th>금액</th>
+                            <th>결제</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>김서연</td>
+                            <td>2024-12-01</td>
+                            <td>커트</td>
+                            <td>35,000</td>
+                            <td>카드</td>
+                        </tr>
+                        <tr>
+                            <td>이준호</td>
+                            <td>2024-12-02</td>
+                            <td>남성커트</td>
+                            <td>20,000</td>
+                            <td>현금</td>
+                        </tr>
+                        <tr>
+                            <td>김서연</td>
+                            <td>2024-12-05</td>
+                            <td>염색</td>
+                            <td>80,000</td>
+                            <td>카드</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="tip">
+                <p><strong>고객을 드롭다운에서 선택!</strong></p>
+                <p>더 이상 이름을 직접 입력하지 않아도 됩니다.</p>
+            </div>
+        </section>
+
+        <!-- 관계 확인 -->
+        <section id="practice-check">
+            <h2>실습: 관계 확인하기</h2>
+
+            <ol class="steps-list">
+                <li>
+                    <span class="step-number">1</span>
+                    <div class="step-content">
+                        시술내역 목록에서 <strong>고객명이 표시</strong>되는지 확인
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">2</span>
+                    <div class="step-content">
+                        검색창에 <strong>고객명 "김"</strong>으로 검색해보기
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">3</span>
+                    <div class="step-content">
+                        (선택) 고객 삭제 시 <strong>시술내역도 삭제</strong>되는지 확인
+                    </div>
+                </li>
+            </ol>
+
+            <div class="highlight" style="margin-top: 2em;">
+                <p><strong>축하합니다!</strong></p>
+                <p>VLOOKUP 없이 테이블 연결을 완성했습니다!</p>
+            </div>
+        </section>
+
+        <!-- 체크포인트 -->
+        <section id="checkpoint">
+            <h2>PART 3 체크포인트</h2>
+
+            <ul class="checklist">
+                <li>VLOOKUP vs Foreign Key 이해</li>
+                <li>Treatment Migration 생성</li>
+                <li>foreignId()->constrained() 사용</li>
+                <li>sail artisan migrate 실행</li>
+                <li>Treatment Model 생성</li>
+                <li>belongsTo 관계 설정</li>
+                <li>Customer Model에 hasMany 추가</li>
+                <li>Filament Resource 생성</li>
+                <li>시술내역 3건 입력</li>
+                <li>드롭다운으로 고객 선택 확인</li>
+            </ul>
+
+            <div class="highlight" style="margin-top: 2em; text-align: center;">
+                <p><strong>전부 체크되면 PART 4로!</strong></p>
+                <p>대시보드를 만들어 데이터를 시각화합니다</p>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        function copyCode(button) {
+            const codeBlock = button.parentElement.querySelector('code');
+            const text = codeBlock.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                button.textContent = '복사됨!';
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.textContent = '복사';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('section[id]');
+            const navSections = document.querySelectorAll('.nav-section');
+            const navLinks = document.querySelectorAll('nav a');
+
+            navSections.forEach(navSection => {
+                const title = navSection.querySelector('.section-title');
+                title.addEventListener('click', function(e) {
+                    navSections.forEach(ns => {
+                        if (ns !== navSection) ns.classList.remove('open');
+                    });
+                    navSection.classList.toggle('open');
+                });
+            });
+
+            function activateLink() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (scrollY >= sectionTop - 100) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === '#' + current) {
+                        link.classList.add('active');
+                        const parentSection = link.closest('.nav-section');
+                        if (parentSection) {
+                            navSections.forEach(ns => ns.classList.remove('open'));
+                            parentSection.classList.add('open');
+                        }
+                    }
+                });
+            }
+
+            window.addEventListener('scroll', activateLink);
+            activateLink();
+            if (navSections.length > 0) {
+                navSections[0].classList.add('open');
+            }
+        });
+    </script>
+</body>
+</html>

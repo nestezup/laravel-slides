@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PART 4: 대시보드</title>
+    <link rel="stylesheet" href="common.css">
+    <style>
+        /* Part 4 테마 색상 */
+        :root {
+            --accent-color: #a855f7;
+            --accent-text-color: white;
+            --section-title-color: #c084fc;
+            --section-title-hover-bg: rgba(168, 85, 247, 0.2);
+        }
+
+        /* 대시보드 미리보기 */
+        .dashboard-preview {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 1.5em;
+            margin: 1.5em 0;
+            border: 2px solid #ddd;
+        }
+
+        .dashboard-header {
+            background: #a855f7;
+            color: white;
+            padding: 0.8em 1em;
+            border-radius: 8px 8px 0 0;
+            font-weight: 600;
+            margin: -1.5em -1.5em 1em -1.5em;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1em;
+            margin-bottom: 1.5em;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.2em;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-left: 4px solid #a855f7;
+        }
+
+        .stat-card.blue { border-left-color: #3498db; }
+        .stat-card.green { border-left-color: #27ae60; }
+        .stat-card.orange { border-left-color: #e67e22; }
+        .stat-card.red { border-left-color: #e74c3c; }
+
+        .stat-card .stat-value {
+            font-size: 2em;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .stat-card .stat-label {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-top: 0.3em;
+        }
+
+        .recent-table {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .recent-table-header {
+            background: #ecf0f1;
+            padding: 0.8em 1em;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        /* 위젯 다이어그램 */
+        .widget-diagram {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1em;
+            justify-content: center;
+            padding: 1.5em;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin: 1em 0;
+        }
+
+        .widget-block {
+            background: white;
+            border: 2px solid #a855f7;
+            border-radius: 8px;
+            padding: 1em 1.5em;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .widget-block.stats {
+            border-color: #3498db;
+            background: #e8f4fd;
+        }
+
+        .widget-block.table {
+            border-color: #e67e22;
+            background: #fef5e7;
+        }
+
+        .widget-block .icon {
+            font-size: 2em;
+            margin-bottom: 0.3em;
+        }
+
+        .widget-block .label {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1em 0;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .comparison-table th {
+            background: #a855f7;
+            color: white;
+            font-weight: 600;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .step-number {
+            display: inline-block;
+            min-width: 32px;
+            width: 32px;
+            height: 32px;
+            background: #a855f7;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 32px;
+            font-weight: 700;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+
+        .steps-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .steps-list li {
+            margin-bottom: 1.5em;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .steps-list .step-content {
+            flex: 1;
+        }
+
+        .checklist {
+            list-style: none;
+            margin-left: 0;
+        }
+
+        .checklist li {
+            padding: 0.5em 0;
+            padding-left: 2em;
+            position: relative;
+        }
+
+        .checklist li::before {
+            content: "☐";
+            position: absolute;
+            left: 0;
+            font-size: 1.2em;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 네비게이션 -->
+    <nav>
+        <h1>PART 4: 대시보드</h1>
+        <ul class="nav-accordion">
+            <li class="nav-section">
+                <a href="#intro" class="section-title">시작하기</a>
+                <ul class="subsections">
+                    <li><a href="#goal">오늘의 목표</a></li>
+                    <li><a href="#recap">지금까지 만든 것</a></li>
+                </ul>
+            </li>
+            <li class="nav-section">
+                <a href="#widget-concept" class="section-title">Widget 개념</a>
+                <ul class="subsections">
+                    <li><a href="#widget-what">Widget이란</a></li>
+                    <li><a href="#widget-types">Widget 종류</a></li>
+                </ul>
+            </li>
+            <li class="nav-section">
+                <a href="#stats-widget" class="section-title">통계 카드</a>
+                <ul class="subsections">
+                    <li><a href="#stats-create">Widget 생성</a></li>
+                    <li><a href="#stats-code">코드 작성</a></li>
+                </ul>
+            </li>
+            <li class="nav-section">
+                <a href="#table-widget" class="section-title">테이블 위젯</a>
+                <ul class="subsections">
+                    <li><a href="#table-create">Widget 생성</a></li>
+                    <li><a href="#table-code">코드 작성</a></li>
+                </ul>
+            </li>
+            <li class="nav-section">
+                <a href="#practice" class="section-title">실습</a>
+            </li>
+            <li class="nav-section">
+                <a href="#checkpoint" class="section-title">체크포인트</a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- 메인 콘텐츠 -->
+    <main>
+        <!-- 타이틀 -->
+        <section class="title-section" id="intro">
+            <h1>PART 4</h1>
+            <h2>대시보드 - 현황판 만들기</h2>
+            <p><span class="text-highlight">숫자가 한눈에 보이는 현황판</span></p>
+            <p style="margin-top: 2em; color: #95a5a6;">40분</p>
+        </section>
+
+        <!-- 오늘의 목표 -->
+        <section id="goal">
+            <h2>오늘의 목표</h2>
+            <div class="highlight">
+                <p><strong>Widget으로 데이터 시각화하기</strong></p>
+            </div>
+
+            <div class="dashboard-preview">
+                <div class="dashboard-header">대시보드</div>
+                <div class="stats-grid">
+                    <div class="stat-card blue">
+                        <div class="stat-value">3</div>
+                        <div class="stat-label">총 고객</div>
+                    </div>
+                    <div class="stat-card green">
+                        <div class="stat-value">3</div>
+                        <div class="stat-label">총 시술</div>
+                    </div>
+                    <div class="stat-card orange">
+                        <div class="stat-value">135,000</div>
+                        <div class="stat-label">총 매출</div>
+                    </div>
+                    <div class="stat-card red">
+                        <div class="stat-value">45,000</div>
+                        <div class="stat-label">평균 객단가</div>
+                    </div>
+                </div>
+                <div class="recent-table">
+                    <div class="recent-table-header">최근 시술 내역</div>
+                    <table class="comparison-table" style="margin: 0;">
+                        <thead>
+                            <tr>
+                                <th>날짜</th>
+                                <th>고객</th>
+                                <th>시술</th>
+                                <th>금액</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>12/05</td>
+                                <td>김서연</td>
+                                <td>염색</td>
+                                <td>80,000원</td>
+                            </tr>
+                            <tr>
+                                <td>12/02</td>
+                                <td>이준호</td>
+                                <td>남성커트</td>
+                                <td>20,000원</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 지금까지 만든 것 -->
+        <section id="recap">
+            <h2>지금까지 만든 것</h2>
+
+            <div class="two-column">
+                <div>
+                    <h3>PART 2: 고객 테이블</h3>
+                    <div style="background: #f8f9fa; padding: 1em; border-radius: 8px; border-left: 4px solid #3498db;">
+                        <strong>customers</strong><br>
+                        id, name, phone, birth_date, gender, memo
+                    </div>
+                </div>
+                <div>
+                    <h3>PART 3: 시술내역 테이블</h3>
+                    <div style="background: #e8f8f5; padding: 1em; border-radius: 8px; border-left: 4px solid #27ae60;">
+                        <strong>treatments</strong><br>
+                        id, customer_id, treatment_date, treatment_type, price
+                    </div>
+                </div>
+            </div>
+
+            <div class="tip" style="margin-top: 1.5em; text-align: center;">
+                <p>이 데이터들을 <strong>대시보드에서 한눈에</strong> 보여줍니다!</p>
+            </div>
+        </section>
+
+        <!-- Widget 개념 -->
+        <section id="widget-concept" class="section-divider">
+            <h2>Widget 개념</h2>
+            <p>대시보드의 레고 블록</p>
+        </section>
+
+        <!-- Widget이란 -->
+        <section id="widget-what">
+            <h2>Widget이란?</h2>
+
+            <div class="highlight">
+                <p><strong>Widget = 대시보드에 표시되는 정보 카드</strong></p>
+                <p>레고 블록처럼 조합해서 대시보드를 구성</p>
+            </div>
+
+            <div class="widget-diagram">
+                <div class="widget-block stats">
+                    <div class="icon">📊</div>
+                    <div class="label">통계 카드</div>
+                </div>
+                <div class="widget-block table">
+                    <div class="icon">📋</div>
+                    <div class="label">테이블</div>
+                </div>
+            </div>
+
+            <div class="tip">
+                <p>오늘은 <strong>통계 카드</strong>와 <strong>테이블 위젯</strong>을 만듭니다!</p>
+            </div>
+        </section>
+
+        <!-- Widget 종류 -->
+        <section id="widget-types">
+            <h2>Filament Widget 종류</h2>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>종류</th>
+                        <th>용도</th>
+                        <th>예시</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>StatsOverviewWidget</strong></td>
+                        <td>숫자 통계 표시</td>
+                        <td>총 고객 수, 매출 합계</td>
+                    </tr>
+                    <tr>
+                        <td><strong>TableWidget</strong></td>
+                        <td>테이블 형태 데이터</td>
+                        <td>최근 시술 내역</td>
+                    </tr>
+                    <tr>
+                        <td><strong>ChartWidget</strong></td>
+                        <td>차트 그래프</td>
+                        <td>월별 매출 추이 (심화)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 통계 카드 -->
+        <section id="stats-widget" class="section-divider">
+            <h2>통계 카드 Widget</h2>
+            <p>숫자로 현황을 한눈에</p>
+        </section>
+
+        <!-- Widget 생성 -->
+        <section id="stats-create">
+            <h2>StatsOverview Widget 생성</h2>
+
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">복사</button>
+                <pre><code>sail artisan make:filament-widget StatsOverview --stats-overview</code></pre>
+            </div>
+
+            <div class="tip">
+                <p><code>--stats-overview</code> 옵션으로 통계 카드 전용 위젯 생성!</p>
+            </div>
+        </section>
+
+        <!-- 코드 작성 -->
+        <section id="stats-code">
+            <h2>StatsOverview 코드</h2>
+
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">복사</button>
+                <pre><code>&lt;?php
+
+namespace App\Filament\Widgets;
+
+use App\Models\Customer;
+use App\Models\Treatment;
+use Filament\Widgets\StatsOverviewWidget as BaseWidget;
+use Filament\Widgets\StatsOverviewWidget\Stat;
+use Carbon\Carbon;
+
+class StatsOverview extends BaseWidget
+{
+    protected function getStats(): array
+    {
+        $startOfMonth = Carbon::now()->startOfMonth();
+
+        return [
+            Stat::make('총 고객 수', Customer::count())
+                ->description('등록된 전체 고객')
+                ->color('primary'),
+
+            Stat::make('총 시술 건수', Treatment::count())
+                ->description('전체 시술 내역')
+                ->color('success'),
+
+            Stat::make('이번 달 매출', number_format(
+                Treatment::where('treatment_date', '>=', $startOfMonth)->sum('price')
+            ) . '원')
+                ->description(Carbon::now()->format('Y년 m월'))
+                ->color('warning'),
+
+            Stat::make('평균 객단가', number_format(
+                Treatment::avg('price') ?? 0
+            ) . '원')
+                ->description('시술 1건당 평균')
+                ->color('danger'),
+        ];
+    }
+}</code></pre>
+            </div>
+
+            <h3>Eloquent 쿼리 = 엑셀 수식</h3>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>엑셀</th>
+                        <th>Eloquent</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>=COUNTA(A:A)</code></td>
+                        <td><code>Customer::count()</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>=SUM(E:E)</code></td>
+                        <td><code>Treatment::sum('price')</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>=AVERAGE(E:E)</code></td>
+                        <td><code>Treatment::avg('price')</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 테이블 위젯 -->
+        <section id="table-widget" class="section-divider">
+            <h2>테이블 Widget</h2>
+            <p>최근 데이터를 목록으로</p>
+        </section>
+
+        <!-- 테이블 Widget 생성 -->
+        <section id="table-create">
+            <h2>RecentTreatments Widget 생성</h2>
+
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">복사</button>
+                <pre><code>sail artisan make:filament-widget RecentTreatments --table</code></pre>
+            </div>
+
+            <div class="tip">
+                <p><code>--table</code> 옵션으로 테이블 형태 위젯 생성!</p>
+            </div>
+        </section>
+
+        <!-- 테이블 코드 -->
+        <section id="table-code">
+            <h2>RecentTreatments 코드</h2>
+
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">복사</button>
+                <pre><code>&lt;?php
+
+namespace App\Filament\Widgets;
+
+use App\Models\Treatment;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Filament\Widgets\TableWidget as BaseWidget;
+
+class RecentTreatments extends BaseWidget
+{
+    protected static ?string $heading = '최근 시술 내역';
+
+    protected int | string | array $columnSpan = 'full';
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(
+                Treatment::query()->latest('treatment_date')->limit(5)
+            )
+            ->columns([
+                Tables\Columns\TextColumn::make('treatment_date')
+                    ->label('날짜')
+                    ->date('m/d'),
+
+                Tables\Columns\TextColumn::make('customer.name')
+                    ->label('고객명'),
+
+                Tables\Columns\TextColumn::make('treatment_type')
+                    ->label('시술'),
+
+                Tables\Columns\TextColumn::make('price')
+                    ->label('금액')
+                    ->money('KRW'),
+            ])
+            ->paginated(false);
+    }
+}</code></pre>
+            </div>
+
+            <div class="tip">
+                <p><code>customer.name</code> - PART 3에서 설정한 관계를 통해 고객 이름 표시!</p>
+            </div>
+        </section>
+
+        <!-- 실습 -->
+        <section id="practice" class="section-divider">
+            <h2>실습</h2>
+            <p>직접 만들어봅시다</p>
+        </section>
+
+        <section>
+            <h2>실습: Widget 만들기</h2>
+
+            <ol class="steps-list">
+                <li>
+                    <span class="step-number">1</span>
+                    <div class="step-content">
+                        <strong>통계 카드 Widget 생성</strong>
+                        <div class="code-block">
+                            <button class="copy-button" onclick="copyCode(this)">복사</button>
+                            <pre><code>sail artisan make:filament-widget StatsOverview --stats-overview</code></pre>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">2</span>
+                    <div class="step-content">
+                        <strong>코드 작성</strong><br>
+                        app/Filament/Widgets/StatsOverview.php
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">3</span>
+                    <div class="step-content">
+                        <strong>테이블 Widget 생성</strong>
+                        <div class="code-block">
+                            <button class="copy-button" onclick="copyCode(this)">복사</button>
+                            <pre><code>sail artisan make:filament-widget RecentTreatments --table</code></pre>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">4</span>
+                    <div class="step-content">
+                        <strong>브라우저에서 확인</strong>
+                        <div class="code-block">
+                            <button class="copy-button" onclick="copyCode(this)">복사</button>
+                            <pre><code>http://localhost/admin</code></pre>
+                        </div>
+                    </div>
+                </li>
+            </ol>
+        </section>
+
+        <!-- 체크포인트 -->
+        <section id="checkpoint">
+            <h2>PART 4 체크포인트</h2>
+
+            <ul class="checklist">
+                <li>Widget 개념 이해</li>
+                <li>StatsOverview Widget 생성</li>
+                <li>4개 통계 카드 구현</li>
+                <li>RecentTreatments Widget 생성</li>
+                <li>최근 시술 5건 표시</li>
+                <li>대시보드에서 확인</li>
+            </ul>
+
+            <div class="highlight" style="margin-top: 2em; text-align: center;">
+                <p style="font-size: 1.5em;"><strong>축하합니다!</strong></p>
+                <p style="font-size: 1.1em; margin-top: 0.5em;">미용실 CRM이 완성되었습니다!</p>
+            </div>
+
+            <div class="dashboard-preview" style="margin-top: 2em;">
+                <div class="dashboard-header">완성된 시스템</div>
+                <table class="comparison-table" style="margin: 0;">
+                    <thead>
+                        <tr>
+                            <th>PART</th>
+                            <th>만든 것</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>PART 1</td>
+                            <td>환경 설정 + Filament 설치</td>
+                        </tr>
+                        <tr>
+                            <td>PART 2</td>
+                            <td>고객 테이블</td>
+                        </tr>
+                        <tr>
+                            <td>PART 3</td>
+                            <td>시술내역 테이블 + 관계 설정</td>
+                        </tr>
+                        <tr>
+                            <td>PART 4</td>
+                            <td>대시보드 위젯 (통계 + 테이블)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function copyCode(button) {
+            const codeBlock = button.parentElement.querySelector('code');
+            const text = codeBlock.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                button.textContent = '복사됨!';
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.textContent = '복사';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('section[id]');
+            const navSections = document.querySelectorAll('.nav-section');
+            const navLinks = document.querySelectorAll('nav a');
+
+            navSections.forEach(navSection => {
+                const title = navSection.querySelector('.section-title');
+                title.addEventListener('click', function(e) {
+                    navSections.forEach(ns => {
+                        if (ns !== navSection) ns.classList.remove('open');
+                    });
+                    navSection.classList.toggle('open');
+                });
+            });
+
+            function activateLink() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (scrollY >= sectionTop - 100) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === '#' + current) {
+                        link.classList.add('active');
+                        const parentSection = link.closest('.nav-section');
+                        if (parentSection) {
+                            navSections.forEach(ns => ns.classList.remove('open'));
+                            parentSection.classList.add('open');
+                        }
+                    }
+                });
+            }
+
+            window.addEventListener('scroll', activateLink);
+            activateLink();
+            if (navSections.length > 0) {
+                navSections[0].classList.add('open');
+            }
+        });
+    </script>
+</body>
+</html>
