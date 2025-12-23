@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PART 2: 고객 테이블</title>
-    <link rel="stylesheet" href="common.css">
+    <link rel="stylesheet" href="../common.css">
     <style>
         /* Part 2 테마 색상 - Indigo (Structure) */
         :root {
@@ -821,12 +821,19 @@ class Customer extends Model
 
             function activateLink() {
                 let current = '';
-                sections.forEach(section => {
-                    const sectionTop = section.offsetTop;
-                    if (scrollY >= sectionTop - 100) {
-                        current = section.getAttribute('id');
+                // Bottom of page detection
+                if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 50) {
+                    if (sections.length > 0) {
+                        current = sections[sections.length - 1].getAttribute('id');
                     }
-                });
+                } else {
+                    sections.forEach(section => {
+                        const sectionTop = section.offsetTop;
+                        if (scrollY >= sectionTop - 100) {
+                            current = section.getAttribute('id');
+                        }
+                    });
+                }
 
                 navLinks.forEach(link => {
                     link.classList.remove('active');

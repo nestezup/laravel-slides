@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Code Serendipity - 업무 자동화 마스터 클래스</title>
-    <link rel="stylesheet" href="common.css">
+    <link rel="stylesheet" href="../common.css">
     <style>
         /* Part 1 테마 색상 - Cyan (Fresh Start) */
         :root {
@@ -423,8 +423,10 @@
                 <ul class="subsections">
                     <li><a href="#env-check">환경 확인</a></li>
                     <li><a href="#filament-install">Filament 설치</a></li>
-                    <li><a href="#checkpoint">체크포인트</a></li>
                 </ul>
+            </li>
+            <li class="nav-section">
+                <a href="#checkpoint" class="section-title">체크포인트</a>
             </li>
         </ul>
     </nav>
@@ -1104,12 +1106,19 @@ http://localhost/admin</code></pre>
             // 스크롤 시 활성화 및 아코디언 자동 열기
             function activateLink() {
                 let current = '';
-                sections.forEach(section => {
-                    const sectionTop = section.offsetTop;
-                    if (scrollY >= sectionTop - 100) {
-                        current = section.getAttribute('id');
+                // Bottom of page detection
+                if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 50) {
+                    if (sections.length > 0) {
+                        current = sections[sections.length - 1].getAttribute('id');
                     }
-                });
+                } else {
+                    sections.forEach(section => {
+                        const sectionTop = section.offsetTop;
+                        if (scrollY >= sectionTop - 100) {
+                            current = section.getAttribute('id');
+                        }
+                    });
+                }
 
                 navLinks.forEach(link => {
                     link.classList.remove('active');
